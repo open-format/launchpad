@@ -1,11 +1,14 @@
 {
   "private": true,
+  "name": "launchpad",
+  "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
+    "@changesets/cli": "^2.27.1",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "autoprefixer": "10.4.17",
