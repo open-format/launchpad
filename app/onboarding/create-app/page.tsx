@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 export default function CreateAppPage() {
   const router = useRouter();
 
-  async function onCreateApp(data) {
+  async function onCreateApp(data: any) {
     alert(JSON.stringify(data));
     return router.push("/home/apps");
   }

@@ -17,11 +17,17 @@ interface GetStartedProps {
   setIsOpen: (value: boolean) => void;
 }
 
+type Item = {
+  title: string;
+  description: string;
+  href: string;
+};
+
 export default function GetStarted({
   isOpen,
   setIsOpen,
 }: GetStartedProps) {
-  const ITEMS = [
+  const ITEMS: Item[] = [
     {
       title: "First day with Buildship",
       description:
@@ -56,11 +62,7 @@ export default function GetStarted({
   );
 }
 
-function GridItem({
-  item,
-}: {
-  item: { title: string; href: string }[];
-}) {
+function GridItem({ item }: { item: Item }) {
   return (
     <Card className="hover:bg-secondary/80">
       <Link href={item.href}>
