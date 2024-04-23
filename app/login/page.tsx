@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import getUserSession from "@/lib/getUserSession";
 import { redirect } from "next/navigation";
 import { LoginForm } from "./login-form";
@@ -16,20 +14,28 @@ export default async function LoginPage() {
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">Login</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Welcome</h1>
+            <h2 className="text-sm font-medium text-muted-foreground">
+              Sign in to your account
+            </h2>
           </div>
           <LoginForm />
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
-        <Image
-          src="https://i.ibb.co/hcCWWyT/nasa-r-TZW4f02z-Y8-unsplash.jpg"
-          alt="Image"
-          width="1920"
-          height="1080"
-          className="h-screen w-full object-cover"
-        />
+      <div className="hidden bg-muted lg:flex h-screen items-end border-l ">
+        <div className="flex items-center space-x-2 m-3 justify-center p-5">
+          <blockquote className="space-y-2 text-right">
+            <p className="text-lg">
+              "Using OPENFORMAT to power our first Web3 enabled
+              project took all of the hassle out of dealing with smart
+              contracts and got us up and running much quicker"
+            </p>
+            <footer className="text-sm font-semibold">
+              Jack - Developer
+            </footer>
+          </blockquote>
+        </div>
       </div>
     </div>
   );
