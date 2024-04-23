@@ -1,14 +1,6 @@
 import Image from "next/image";
 
-import { buttonVariants } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  EnvelopeOpenIcon,
-  GitHubLogoIcon,
-} from "@radix-ui/react-icons";
-import Link from "next/link";
+import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
@@ -18,40 +10,7 @@ export default function LoginPage() {
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
           </div>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="terms" />
-              <label
-                htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Sign up to product updates
-              </label>
-            </div>
-            <Link
-              className={buttonVariants()}
-              href="/onboarding/create-account"
-            >
-              <EnvelopeOpenIcon className="mr-2" />
-              Continue with Email
-            </Link>
-            <Link
-              className={buttonVariants()}
-              href="/onboarding/create-account"
-            >
-              <GitHubLogoIcon className="mr-2" />
-              Continue with Github
-            </Link>
-          </div>
+          <LoginForm />
         </div>
       </div>
       <div className="hidden bg-muted lg:block">
