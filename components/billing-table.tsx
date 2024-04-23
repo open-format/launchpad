@@ -20,7 +20,14 @@ import { CoinsIcon, InfoIcon } from "lucide-react";
 import Link from "next/link";
 import ChainName from "./chain-name";
 
-const TRANSACTIONS = [
+type Transaction = {
+  id: number;
+  app: string;
+  chain: "arbitrum" | "polygon" | "arbitrumSepolia" | "polygonAmoy";
+  type: string;
+};
+
+const TRANSACTIONS: Transaction[] = [
   {
     id: Math.random(),
     app: "REWARDLE",
