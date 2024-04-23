@@ -111,7 +111,9 @@ export default function RootLayout({
                   <Link href="/home/settings/billing">Billing</Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/login">Logout</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
