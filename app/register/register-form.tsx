@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -22,7 +23,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { signInWithOtp } from "../_actions";
 
-export const LoginForm = () => {
+export const RegisterForm = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -98,19 +99,42 @@ export const LoginForm = () => {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="emailSignup"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormControl>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    disabled={true}
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <label
+                    htmlFor="terms"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Sign up to product updates
+                  </label>
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <Button type="submit" disabled={true}>
           {isPending ? "loading..." : "Sign In"}
         </Button>
       </form>
       <div className="my-8 self-center text-sm text-center">
         <span className="text-foreground-light">
-          Don't have an account?
+          Have an account?
         </span>{" "}
         <Link
           className="underline text-foreground hover:text-foreground-light transition"
-          href="/register"
+          href="/login"
         >
-          Sign Up Now
+          Sign In Now
         </Link>
       </div>
     </Form>
