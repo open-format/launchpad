@@ -1,8 +1,17 @@
 import Image from "next/image";
 
+import getUserSession from "@/lib/getUserSession";
+import { redirect } from "next/navigation";
 import { LoginForm } from "./login-form";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const {
+    data: { session },
+  } = await getUserSession();
+
+  if (session) {
+    return redirect("/home/apps");
+  }
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
