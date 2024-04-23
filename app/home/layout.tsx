@@ -107,6 +107,9 @@ export default function RootLayout({
                 <DropdownMenuItem onClick={toggleTheme}>
                   Toggle Theme
                 </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/home/settings/billing">Billing</Link>
+                </DropdownMenuItem>
 
                 <DropdownMenuItem>Logout</DropdownMenuItem>
               </DropdownMenuContent>
