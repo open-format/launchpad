@@ -106,32 +106,62 @@ export function CreateAccountForm() {
       </Card>
     </div>
   ) : (
-    <Form {...form}>
-      <form
-        className="w-full space-y-2"
-        onSubmit={form.handleSubmit(handleFormSubmission)}
+    <div className="space-y-4">
+      <Form {...form}>
+        <form
+          className="w-full space-y-2"
+          onSubmit={form.handleSubmit(handleFormSubmission)}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle>Create web3 account</CardTitle>
+              <CardDescription>
+                You'll need a Web3 account to use OPENFORMAT. We can
+                set one up for you, but you'll have to secure it
+                yourself. OPENFORMAT doesn't store your password, so
+                it can't be recovered by us.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Password"
+                          {...field}
+                          type="password"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="justify-between">
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href={URLS.docs}
+                target="_blank"
+              >
+                Learn more
+              </Link>
+              <Button type="submit">Create web3 account</Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
+      <Link
+        className="items-center flex justify-center hover:underline"
+        href="/home/apps"
       >
-        <div>
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Password"
-                    {...field}
-                    type="password"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <Button type="submit">Create web3 account</Button>
-      </form>
-    </Form>
+        Skip
+      </Link>
+    </div>
   );
 }
