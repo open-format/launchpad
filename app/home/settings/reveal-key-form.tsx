@@ -34,7 +34,7 @@ const FormSchema = z.object({
 
 export default function RevealKeyForm() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [key, setKey] = useState<string>();
+  const [key, setKey] = useState<string | null>();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -51,9 +51,9 @@ export default function RevealKeyForm() {
   ) {
     try {
       const result = await revealAccountKey(data.password);
-      setKey(result.accountKey);
+      setKey(result.data?.accountKey);
       reset();
-    } catch (e) {
+    } catch (e: any) {
       setError("password", {
         type: "custom",
         message: e.message,
