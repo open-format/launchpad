@@ -1,10 +1,15 @@
-import { buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
+import getUserSession from "@/lib/getUserSession";
+import { redirect } from "next/navigation";
+import { LoginForm } from "./login-form";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const {
+    data: { session },
+  } = await getUserSession();
+
+  if (session) {
+    return redirect("/home/apps");
+  }
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
@@ -15,46 +20,7 @@ export default function LoginPage() {
               Sign in to your account
             </h2>
           </div>
-          <Link className={buttonVariants()} href="/home/apps">
-            <GitHubLogoIcon className="mr-2" />
-            Continue with Github
-          </Link>
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-strong"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-background px-2 text-sm text-muted-foreground">
-                OR
-              </span>
-            </div>
-          </div>
-
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                required
-              />
-            </div>
-            <Link className={buttonVariants()} href="/home/apps">
-              Sign In
-            </Link>
-          </div>
-          <div className="my-8 self-center text-sm text-center">
-            <span className="text-foreground-light">
-              Don't have an account?
-            </span>{" "}
-            <Link
-              className="underline text-foreground hover:text-foreground-light transition"
-              href="/register"
-            >
-              Sign Up Now
-            </Link>
-          </div>
+          <LoginForm />
         </div>
       </div>
       <div className="hidden bg-muted lg:flex h-screen items-end border-l ">

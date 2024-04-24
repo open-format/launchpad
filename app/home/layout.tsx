@@ -1,13 +1,3 @@
-"use client";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Book,
   Cog,
@@ -29,30 +19,27 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import Profile from "@/components/profile";
 import { URLS } from "@/lib/constants";
+import getUserSession from "@/lib/getUserSession";
 import { DiscordLogoIcon } from "@radix-ui/react-icons";
-import { useTheme } from "next-themes";
-import Image from "next/image";
 
-export default function RootLayout({
+import Image from "next/image";
+import { redirect } from "next/navigation";
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { setTheme, theme } = useTheme();
+  const {
+    data: { session },
+  } = await getUserSession();
 
-  function toggleTheme() {
-    if (theme === "dark") {
-      setTheme("light");
-    } else {
-      setTheme("dark");
-    }
+  if (!session) {
+    return redirect("/login");
   }
+
   return (
     <div className="grid max-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r md:block h-screen">
@@ -89,33 +76,7 @@ export default function RootLayout({
                 Settings
               </Link>
             </nav>
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <div className="flex items-center space-x-2 m-3 justify-center">
-                  <Avatar>
-                    <AvatarImage src="https://avatars.githubusercontent.com/u/7047410?v=4" />
-                    <AvatarFallback>AK</AvatarFallback>
-                  </Avatar>
-                  <p className="font-bold truncate">
-                    andy@openformat.tech
-                  </p>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={toggleTheme}>
-                  Toggle Theme
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/home/settings/billing">Billing</Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem>
-                  <Link href="/login">Logout</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Profile user={session.user} />
           </div>
         </div>
       </div>
