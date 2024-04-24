@@ -73,7 +73,7 @@ export async function getAccountAddress(): Promise<
       .eq("id", user.id)
       .maybeSingle();
 
-    if (!wallet) {
+    if (!wallet.data) {
       throw new Error("Account not found, please try again.");
     }
 

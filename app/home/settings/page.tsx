@@ -18,6 +18,7 @@ import {
 import { Label } from "@/components/ui/label";
 import ValueBox from "@/components/value-box";
 import Link from "next/link";
+import { CreateAccountForm } from "./create-account-form";
 import RevealKey from "./reveal-key-form";
 
 async function getData() {
@@ -26,7 +27,8 @@ async function getData() {
 }
 
 export default async function SettingsPage() {
-  const data = await getData();
+  //@TODO correct handle errors
+  const data = await getData().catch((e) => e);
 
   return (
     <div className="flex w-full flex-col space-y-5">
@@ -39,17 +41,23 @@ export default async function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Label>Public Key</Label>
-          {data && data.address && (
-            <ValueBox
-              value={data.address}
-              copyText="Public Key copied to clipboard."
-            />
+          {data && data.address ? (
+            <div>
+              <div>
+                <Label>Public Key</Label>
+                <ValueBox
+                  value={data.address}
+                  copyText="Public Key copied to clipboard."
+                />
+              </div>
+              <div>
+                <Label>Private Key</Label>
+                <RevealKey />
+              </div>
+            </div>
+          ) : (
+            <CreateAccountForm />
           )}
-          <Label>Private Key</Label>
-          <div className="flex space-x-2 flex-1">
-            <RevealKey />
-          </div>
         </CardContent>
       </Card>
       <Card>
