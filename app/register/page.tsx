@@ -1,21 +1,25 @@
 import { buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div>
-            <h1 className="text-3xl font-bold">Welcome</h1>
+            <h1 className="text-3xl font-bold">Register</h1>
             <h2 className="text-sm font-medium text-muted-foreground">
-              Sign in to your account
+              Create a new account
             </h2>
           </div>
-          <Link className={buttonVariants()} href="/home/apps">
+          <Link
+            className={buttonVariants()}
+            href="/onboarding/create-account"
+          >
             <GitHubLogoIcon className="mr-2" />
             Continue with Github
           </Link>
@@ -40,19 +44,31 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <Link className={buttonVariants()} href="/home/apps">
-              Sign In
+            <div className="flex items-center space-x-2">
+              <Checkbox id="terms" />
+              <label
+                htmlFor="terms"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Sign up to product updates
+              </label>
+            </div>
+            <Link
+              className={buttonVariants()}
+              href="/onboarding/create-account"
+            >
+              Register
             </Link>
           </div>
           <div className="my-8 self-center text-sm text-center">
             <span className="text-foreground-light">
-              Don't have an account?
+              Have an account?
             </span>{" "}
             <Link
               className="underline text-foreground hover:text-foreground-light transition"
-              href="/register"
+              href="/login"
             >
-              Sign Up Now
+              Sign In Now
             </Link>
           </div>
         </div>

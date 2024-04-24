@@ -1,19 +1,16 @@
-import { ThemeProvider } from "@/components/theme-provider";
-import { GeistSans } from "geist/font/sans";
+"use client";
 
-import { ModeToggle } from "@/components/mode-toggle";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Manrope as FontSans } from "next/font/google";
+
+import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
-export const metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description:
-    "The fastest way to build apps with Next.js and Supabase",
-};
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export default function RootLayout({
   children,
@@ -21,18 +18,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
-      <body>
+    <html lang="en">
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <header>
-            <ModeToggle />
-          </header>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
