@@ -16,9 +16,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
 import Link from "next/link";
 import { CreateAccountForm } from "./create-account-form";
+import { CreateAPIKey } from "./create-api-key";
 import RevealKey from "./reveal-key-form";
 
 async function getData() {
@@ -63,9 +70,29 @@ export default async function SettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>API Keys</CardTitle>
-          <CardDescription>Manage your API Keys</CardDescription>
+          <CardDescription>
+            Securely create a new API key linked to your web3 account.
+            For your security, API keys are only displayed once at the
+            time of creation.
+          </CardDescription>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          {data.address ? (
+            <CreateAPIKey />
+          ) : (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button disabled>Generate New API Key</Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-[300px]">
+                  You need to create a web3 account before you can
+                  generate an API Key.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </CardContent>
       </Card>
       <Card>
         <CardHeader>
