@@ -93,8 +93,7 @@ export default function CreateAppDialog() {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
           resolve("Data fetched successfully");
-          setAppID("0x234534f6t43g6y54th87f45tc45rf45fr");
-          alert(JSON.stringify(data));
+          setAppID("0xfb2c2196831deeb8311d2cb4b646b94ed5ecf684");
         }, 2000);
       });
     }
