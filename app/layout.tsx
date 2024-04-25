@@ -32,7 +32,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Toaster />
+          <Toaster
+            toastOptions={{ classNames: { error: "bg-red-500" } }}
+          />
         </ThemeProvider>
       </body>
     </html>
