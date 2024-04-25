@@ -2,6 +2,7 @@
 
 import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
+import { getAccountClient } from "@/lib/viem/config";
 import { ethers } from "ethers";
 import { redirect } from "next/navigation";
 
@@ -127,5 +128,67 @@ export async function revealAccountKey(
     } else {
       throw new Error(error.message);
     }
+  }
+}
+
+export async function createAPIKey(password: string) {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
+
+    const { account, accountClient } = getAccountClient(
+      decrypted.privateKey
+    );
+
+    const challenge = await fetch(
+      "https://api.openformat.tech/key/challenge",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_address: account.address }),
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => console.error(err));
+
+    const signature = await accountClient.signMessage({
+      message: challenge.challenge,
+    });
+
+    const verify = await fetch(
+      "https://api.openformat.tech/key/verify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          public_address: account.address,
+          signature: signature,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => console.error(err));
+
+    return verify.api_key;
+  } catch (e) {
+    // @TODO Add correct error handling
+    return e;
   }
 }
