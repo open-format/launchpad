@@ -1,10 +1,15 @@
 "use server";
 
+import { appFactoryAbi } from "@/abis/AppFactory";
+import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
+import { handleTransaction } from "@/lib/transactions";
 import { getAccountClient } from "@/lib/viem/config";
 import { ethers } from "ethers";
 import { redirect } from "next/navigation";
+import { parseEther, stringToHex } from "viem";
 
 // @TODO: Implement magic link
 export async function signInWithOtp({ email }: { email: string }) {
@@ -190,5 +195,71 @@ export async function createAPIKey(password: string) {
   } catch (e) {
     // @TODO Add correct error handling
     return e;
+  }
+}
+
+export async function createApp(name: string, password: string) {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!wallet) {
+      throw new Error("Account not found, please try again.");
+    }
+
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
+
+    const appId = await handleTransaction(
+      decrypted.privateKey,
+      contractAddresses.APP_FACTORY,
+      appFactoryAbi,
+      "create",
+      [stringToHex(name, { size: 32 }), decrypted.address],
+      "Created"
+    );
+
+    const xpAddress = await handleTransaction(
+      decrypted.privateKey,
+      appId,
+      tokenFactoryAbi,
+      "createERC20",
+      [
+        name,
+        "XP",
+        18,
+        parseEther("0"),
+        stringToHex("Base", { size: 32 }),
+      ],
+      "Created"
+    );
+
+    return {
+      appId: appId,
+      xpAddress: xpAddress,
+    };
+  } catch (error: any) {
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
   }
 }

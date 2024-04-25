@@ -22,3 +22,7 @@ interface ActionResponse<T> {
 interface AddressResponse {
   address: string;
 }
+
+type ErrorMessages = {
+  [key: string]: string;
+};
