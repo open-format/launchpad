@@ -2,4 +2,5 @@
 "launchpad": minor
 ---
 
-adds shadcn component library, darkmode functionality
+**shadcn Component Library**: Integrated shadcn component library for enhanced UI components.
+**Dark Mode**: Added dark mode functionality.
