@@ -39,7 +39,6 @@ export async function handleTransaction(
   } catch (error: any) {
     if (error instanceof BaseError) {
       if (error.metaMessages) {
-        console.log({ error: error.metaMessages[0] });
         throw new Error(error.metaMessages[0]);
       } else {
         throw new Error(error.details);
