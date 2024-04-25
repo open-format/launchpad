@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAccountStore } from "@/stores";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
@@ -35,6 +36,7 @@ const FormSchema = z.object({
 export default function RevealKeyForm() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>();
+  const { setEncryptedAccountKey } = useAccountStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -51,6 +53,7 @@ export default function RevealKeyForm() {
   ) {
     try {
       const result = await revealAccountKey(data.password);
+      setEncryptedAccountKey(data.password);
       setKey(result.data?.accountKey);
       reset();
     } catch (e: any) {
