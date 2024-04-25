@@ -27,6 +27,8 @@
     "autoprefixer": "10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "crypto-js": "^4.2.0",
+    "ethers": "^6.12.0",
     "geist": "^1.2.1",
     "lucide-react": "^0.371.0",
     "next": "latest",
@@ -44,6 +46,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",

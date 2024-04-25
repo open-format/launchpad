@@ -33,10 +33,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const {
-    data: { session },
+    data: { user },
   } = await getUserSession();
 
-  if (!session) {
+  if (!user) {
     return redirect("/login");
   }
 
@@ -76,7 +76,7 @@ export default async function RootLayout({
                 Settings
               </Link>
             </nav>
-            <Profile user={session.user} />
+            <Profile user={user} />
           </div>
         </div>
       </div>

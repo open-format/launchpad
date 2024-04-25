@@ -4,10 +4,10 @@ import { LoginForm } from "./login-form";
 
 export default async function LoginPage() {
   const {
-    data: { session },
+    data: { user },
   } = await getUserSession();
 
-  if (session) {
+  if (user) {
     return redirect("/home/apps");
   }
   return (
