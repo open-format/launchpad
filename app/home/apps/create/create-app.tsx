@@ -15,17 +15,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { createApp } from "@/app/_actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -36,13 +39,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ValueBox from "@/components/value-box";
-import { useAccountStore } from "@/stores";
+import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Arbitrum, Polygon } from "@thirdweb-dev/chain-icons";
+import { InfoIcon } from "lucide-react";
+import { toast } from "sonner";
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function CreateAppDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [appID, setAppID] = useState<string | null>();
+
+  const [ids, setIds] = useState<{
+    appId: string;
+    xpTokenAddress: string;
+  } | null>();
 
   function toggle() {
     setIsOpen((t) => !t);
@@ -50,28 +66,17 @@ export default function CreateAppDialog() {
 
   useEffect(() => {
     if (!isOpen) {
-      setAppID(null);
+      setIds(null);
       reset();
     }
   }, [isOpen]);
 
-  const { encryptedAccountKey } = useAccountStore();
-
   const FormSchema = z.object({
-    name: z.string().min(3),
+    name: z.string().min(3).max(32),
     chain: z.string(),
     password: z
       .string()
-      .min(3, "password must contain at least 3 character(s)")
-      .optional()
-      .refine(
-        (data) => {
-          return !!encryptedAccountKey || (data && data.length > 0);
-        },
-        {
-          message: "Password is required",
-        }
-      ),
+      .min(3, "password must contain at least 3 character(s)"),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -80,6 +85,7 @@ export default function CreateAppDialog() {
 
   const {
     reset,
+    setError,
     formState: { isSubmitting },
   } = form;
 
@@ -88,18 +94,25 @@ export default function CreateAppDialog() {
   ) {
     //@TODO: Call createApp server action here.
     //@TODO: Set returned APP_ID in state.
-
-    function mockApiCall() {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve("Data fetched successfully");
-          setAppID("0xfb2c2196831deeb8311d2cb4b646b94ed5ecf684");
-        }, 2000);
-      });
+    try {
+      const res = await createApp(data.name, data.password);
+      setIds({ appId: res.appId, xpTokenAddress: res.xpAddress });
+      reset();
+    } catch (e: any) {
+      if (e.message.includes("password")) {
+        setError("password", {
+          type: "custom",
+          message: e.message,
+        });
+      } else if (e.message.includes("nameAlreadyUsed")) {
+        setError("name", {
+          type: "custom",
+          message: getErrorMessage(e.message),
+        });
+      } else {
+        toast.error(getErrorMessage(e.message));
+      }
     }
-
-    await mockApiCall().then((res) => console.log(res));
-    reset();
   }
 
   return (
@@ -107,20 +120,41 @@ export default function CreateAppDialog() {
       <DialogTrigger className={buttonVariants()}>
         Create App
       </DialogTrigger>
-      {appID ? (
+      {ids ? (
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Your APP ID</DialogTitle>
+            <DialogTitle>Your Application Keys</DialogTitle>
             <DialogDescription>
-              This is your APP ID. You will need this to interact with
-              your on-chain application.
+              Here are your application keys. Use them to interact
+              with the OPENFORMAT API, SDK or nodes.
             </DialogDescription>
           </DialogHeader>
-          <div>
-            <ValueBox
-              value={appID}
-              copyText="APP ID copied to clipboard."
-            />
+          <div className="space-y-2">
+            <div className="space-y-2">
+              <div>
+                <Label>APP ID</Label>
+                <p className="text-sm text-muted-foreground">
+                  This is used to interact with your application
+                </p>
+              </div>
+              <ValueBox
+                value={ids.appId}
+                copyText="APP ID copied to clipboard."
+              />
+            </div>
+            <div className="space-y-2">
+              <div>
+                <Label>XP ADDRESS (SDK ONLY)</Label>
+                <p className="text-sm text-muted-foreground">
+                  If you are using the SDK, use this to reward XP
+                  Token to your users.
+                </p>
+              </div>
+              <ValueBox
+                value={ids.xpTokenAddress}
+                copyText="XP ADDRESS copied to clipboard."
+              />
+            </div>
           </div>
         </DialogContent>
       ) : (
@@ -133,7 +167,7 @@ export default function CreateAppDialog() {
           </DialogHeader>
           <Form {...form}>
             <form
-              className="w-full space-y-2"
+              className="w-full space-y-4"
               onSubmit={form.handleSubmit(handleFormSubmission)}
             >
               <FormField
@@ -146,6 +180,11 @@ export default function CreateAppDialog() {
                       <Input placeholder="Name" {...field} />
                     </FormControl>
                     <FormMessage />
+                    <FormDescription>
+                      The name of your blockchain application. Please
+                      note, due to the immutable nature of the
+                      blockchain this value can not be changed.
+                    </FormDescription>
                   </FormItem>
                 )}
               />
@@ -170,11 +209,28 @@ export default function CreateAppDialog() {
                               <div className="flex items-center space-x-2">
                                 <Arbitrum className="h-6 w-6" />
                                 <p>Arbitrum Sepolia</p>
+                                <TooltipProvider>
+                                  <Tooltip delayDuration={250}>
+                                    <TooltipTrigger>
+                                      <Badge className="bg-green-500 hover:bg-green-500">
+                                        gas sponsorship{" "}
+                                        <InfoIcon className="h-4 w-4 ml-1" />
+                                      </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="bottom"
+                                      className="max-w-[300px]"
+                                    >
+                                      We cover transactions costs for
+                                      this blockchain.
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                               </div>
                             </SelectItem>
                             <SelectItem value="polygon-amoy" disabled>
                               <div className="flex items-center space-x-2">
-                                <Polygon className="h-6 w-6" />
+                                <Polygon className="h-6 w-6 " />
                                 <p>Polygon Amoy</p>
                                 <Badge>Coming soon</Badge>
                               </div>
@@ -206,29 +262,34 @@ export default function CreateAppDialog() {
                         </SelectContent>
                       </Select>
                     </FormControl>
+                    <FormDescription>
+                      We currently support only Arbitrum Sepolia. We
+                      will be expanding to more chains soon.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {!encryptedAccountKey && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Password"
-                          {...field}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Password"
+                        {...field}
+                        type="password"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      This is the password for your web3 account.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {isSubmitting ? (
                 <Button disabled>
