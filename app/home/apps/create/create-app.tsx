@@ -51,9 +51,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useRouter } from "next/navigation";
 
 export default function CreateAppDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const router = useRouter();
 
   const [ids, setIds] = useState<{
     appId: string;
@@ -98,6 +100,7 @@ export default function CreateAppDialog() {
       const res = await createApp(data.name, data.password);
       setIds({ appId: res.appId, xpTokenAddress: res.xpAddress });
       reset();
+      router.refresh();
     } catch (e: any) {
       if (e.message.includes("password")) {
         setError("password", {
