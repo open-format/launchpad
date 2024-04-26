@@ -55,7 +55,7 @@ export default function AppTable({ apps }: AppTableProps) {
                   <ChainName chain="arbitrumSepolia" />
                 </Link>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden lg:block">
                 <ValueBox
                   basic
                   value={app.id}
