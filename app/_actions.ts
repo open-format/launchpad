@@ -49,6 +49,25 @@ export async function createWeb3Account(
     })
     .select();
 
+  if (
+    process.env.ACCOUNT_BALANCE_SERVICE_URL &&
+    process.env.ACCOUNT_BALANCE_SERVICE_AUTH_TOKEN
+  ) {
+    await fetch(process.env.ACCOUNT_BALANCE_SERVICE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.ACCOUNT_BALANCE_SERVICE_AUTH_TOKEN}`,
+      },
+      body: JSON.stringify({
+        user_address: wallet.address,
+        amount: process.env.ACCOUNT_BALANCE_AMOUNT ?? 0.2,
+      }),
+    })
+      .then((response) => response.json())
+      .catch((err) => console.error(err));
+  }
+
   return {
     address: wallet.address,
     encryptedAccountKey: encrypt(
