@@ -10,12 +10,8 @@ import {
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { AspectRatio } from "./ui/aspect-ratio";
-
-interface GetStartedProps {
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
-}
 
 type Item = {
   title: string;
@@ -23,10 +19,8 @@ type Item = {
   href: string;
 };
 
-export default function GetStarted({
-  isOpen,
-  setIsOpen,
-}: GetStartedProps) {
+export default function GetStarted() {
+  const [isVisible, setIsVisible] = useState<boolean>(true);
   const ITEMS: Item[] = [
     {
       title: "First day with Buildship",
@@ -49,15 +43,19 @@ export default function GetStarted({
   ];
   return (
     <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <h2>Your first week in OPENFORMAT</h2>
-        <X onClick={() => setIsOpen(false)} />
-      </div>
-      <div className="grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {ITEMS.map((item, i) => (
-          <GridItem key={i} item={item} />
-        ))}
-      </div>
+      {isVisible && (
+        <>
+          <div className="flex justify-between items-center">
+            <h2>Your first week in OPENFORMAT</h2>
+            <X onClick={() => setIsVisible(false)} />
+          </div>
+          <div className="grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {ITEMS.map((item, i) => (
+              <GridItem key={i} item={item} />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

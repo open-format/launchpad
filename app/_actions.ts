@@ -8,6 +8,7 @@ import createSupabaseServerClient from "@/lib/supabase/server";
 import { handleTransaction } from "@/lib/transactions";
 import { getAccountClient } from "@/lib/viem/config";
 import { ethers } from "ethers";
+import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
 import { parseEther, stringToHex } from "viem";
 
@@ -211,9 +212,15 @@ export async function createAPIKey(password: string) {
       .catch((err) => console.error(err));
 
     return verify.api_key;
-  } catch (e) {
-    // @TODO Add correct error handling
-    return e;
+  } catch (error: any) {
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
   }
 }
 
@@ -280,5 +287,52 @@ export async function createApp(name: string, password: string) {
     } else {
       throw new Error(error.message);
     }
+  }
+}
+
+export async function getUserApps() {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!wallet) {
+      throw new Error("Account not found, please try again.");
+    }
+
+    const query = gql`
+      query getAppsByUser($user: String!) {
+        apps(
+          where: { owner_contains_nocase: $user }
+          orderBy: createdAt
+          orderDirection: desc
+        ) {
+          id
+          name
+          createdAt
+        }
+      }
+    `;
+
+    const data = await request<AppData>(
+      process.env.SUBGRAPH_URL!,
+      query,
+      { user: wallet.data.address }
+    );
+
+    return data.apps;
+  } catch (error: any) {
+    throw new Error(error.message);
   }
 }

@@ -26,3 +26,8 @@ interface AddressResponse {
 type ErrorMessages = {
   [key: string]: string;
 };
+
+// Subgraph Data
+interface AppData {
+  apps: [{ id: string; name: string; createdAt: string }];
+}
