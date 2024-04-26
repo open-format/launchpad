@@ -24,8 +24,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import ValueBox from "@/components/value-box";
+import { getErrorMessage } from "@/lib/errors";
 import { useAccountStore } from "@/stores";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const FormSchema = z.object({
   password: z.string().min(3),
@@ -40,6 +43,11 @@ export function CreateAPIKey() {
   });
   const { setEncryptedAccountKey } = useAccountStore();
 
+  const {
+    setError,
+    formState: { isSubmitting },
+  } = form;
+
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
@@ -47,9 +55,15 @@ export function CreateAPIKey() {
       const result = await createAPIKey(data.password);
       setAPIKey(result);
       setEncryptedAccountKey(result.encryptedAccountKey);
-    } catch (e) {
-      //@TODO Add catch-all error handling
-      console.log(e);
+    } catch (e: any) {
+      if (e.message.includes("password")) {
+        setError("password", {
+          type: "custom",
+          message: e.message,
+        });
+      } else {
+        toast.error(getErrorMessage(e.message));
+      }
     }
   }
 
@@ -115,7 +129,14 @@ export function CreateAPIKey() {
                   )}
                 />
               </div>
-              <Button type="submit">Create API Key</Button>
+              {isSubmitting ? (
+                <Button disabled>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Creating API Key...
+                </Button>
+              ) : (
+                <Button type="submit">Create API Key</Button>
+              )}
             </form>
           </Form>
         </DialogContent>
