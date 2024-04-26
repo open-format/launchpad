@@ -53,7 +53,7 @@ export default function GetStarted({
         <h2>Your first week in OPENFORMAT</h2>
         <X onClick={() => setIsOpen(false)} />
       </div>
-      <div className="grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid w-full gap-5 md:grid-cols-2 xl:grid-cols-3">
         {ITEMS.map((item, i) => (
           <GridItem key={i} item={item} />
         ))}

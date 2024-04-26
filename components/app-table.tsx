@@ -20,9 +20,9 @@ export default function AppTable() {
       <TableCaption>A list of your created apps.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[100px]">Name</TableHead>
+          <TableHead>Name</TableHead>
           <TableHead>Chain</TableHead>
-          <TableHead>App ID</TableHead>
+          <TableHead className="hidden lg:block">App ID</TableHead>
           <TableHead className="text-right sr-only">View</TableHead>
         </TableRow>
       </TableHeader>
@@ -37,7 +37,7 @@ export default function AppTable() {
               <ChainName chain="arbitrumSepolia" />
             </Link>
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:block">
             <ValueBox
               basic
               value="0x3BAf984d4684c9d0a78842B5ff59D74638DfC86d"
@@ -60,7 +60,7 @@ export default function AppTable() {
               <ChainName chain="polygon" />
             </Link>
           </TableCell>
-          <TableCell>
+          <TableCell className="hidden lg:block">
             <ValueBox
               basic
               value="0xaf28A27d7201c93BD19ECf936fA290f39f23A06e"

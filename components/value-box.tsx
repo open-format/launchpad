@@ -41,7 +41,7 @@ export default function ValueBox({
           { "border border-input": !basic }
         )}
       >
-        <p className="truncate max-w-[350px]">{value}</p>
+        <p className="truncate">{value}</p>
       </div>
 
       {copyText && (

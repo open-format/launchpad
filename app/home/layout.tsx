@@ -81,7 +81,7 @@ export default async function RootLayout({
         </div>
       </div>
       <div className="flex flex-col max-h-screen">
-        <header className="flex h-14 items-center gap-2 border-b px-4 lg:h-[60px] lg:px-6 justify-end">
+        <header className="flex items-center gap-2 border-b p-4 lg:px-6 justify-end">
           <Link
             href={URLS.docs}
             className={buttonVariants({ variant: "outline" })}
@@ -164,7 +164,7 @@ export default async function RootLayout({
             </SheetContent>
           </Sheet>
         </header>
-        <main className="container overflow-scroll py-12">
+        <main className="container overflow-scroll py-12 no-scrollbar">
           {children}
         </main>
       </div>
