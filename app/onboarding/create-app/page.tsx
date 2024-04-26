@@ -15,6 +15,8 @@ export default function CreateAppPage() {
 
   async function onCreateApp(data: any) {
     alert(JSON.stringify(data));
+    //@TODO Add create app form
+    //Ref: OF-62/feature-create-app-during-onboarding
     return router.push("/home/apps");
   }
 
@@ -31,7 +33,7 @@ export default function CreateAppPage() {
           <CreateAppForm onSubmit={onCreateApp} />
         </CardContent>
       </Card>
-      <Link href="/onboarding/create-app">Skip</Link>
+      <Link href="/home/apps">Skip</Link>
     </div>
   );
 }
