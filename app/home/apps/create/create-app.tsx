@@ -53,7 +53,11 @@ import {
 } from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 
-export default function CreateAppDialog() {
+export default function CreateAppDialog({
+  account,
+}: {
+  account: any;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
 
@@ -120,8 +124,8 @@ export default function CreateAppDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
-      <DialogTrigger className={buttonVariants()}>
-        Create App
+      <DialogTrigger className={buttonVariants()} disabled={!account}>
+        Create dApp
       </DialogTrigger>
       {ids ? (
         <DialogContent>
@@ -300,7 +304,9 @@ export default function CreateAppDialog() {
                   Creating App...
                 </Button>
               ) : (
-                <Button type="submit">Create App</Button>
+                <Button type="submit" disabled={Boolean(!account)}>
+                  Create dApp
+                </Button>
               )}
             </form>
           </Form>
