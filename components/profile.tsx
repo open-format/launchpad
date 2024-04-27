@@ -42,7 +42,9 @@ export default function Profile({ user }: { user: User }) {
           <Avatar>
             <AvatarImage src={user.user_metadata["avatar_url"]} />
             <AvatarFallback className="font-bold">
-              {user.user_metadata["name"].charAt(0)}
+              {user.user_metadata["name"]
+                ? user.user_metadata["name"].charAt(0)
+                : ""}
             </AvatarFallback>
           </Avatar>
           <p className="font-bold truncate">{user.email}</p>

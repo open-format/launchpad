@@ -307,7 +307,7 @@ export async function getUserApps() {
       .eq("id", user.id)
       .maybeSingle();
 
-    if (!wallet) {
+    if (!wallet.data) {
       throw new Error("Account not found, please try again.");
     }
 
