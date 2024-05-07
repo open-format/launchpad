@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import ChainName from "./chain-name";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import ValueBox from "./value-box";
 
 type App = {
@@ -63,7 +63,12 @@ export default function AppTable({ apps }: AppTableProps) {
                 />
               </TableCell>
               <TableCell className="text-right">
-                <Button disabled>View (WIP)</Button>
+                <Link
+                  className={buttonVariants()}
+                  href={`apps/${app.id}`}
+                >
+                  View
+                </Link>
               </TableCell>
             </TableRow>
           ))}
