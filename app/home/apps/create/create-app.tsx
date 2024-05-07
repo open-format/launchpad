@@ -42,15 +42,8 @@ import ValueBox from "@/components/value-box";
 import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Arbitrum, Polygon } from "@thirdweb-dev/chain-icons";
-import { InfoIcon } from "lucide-react";
 import { toast } from "sonner";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useRouter } from "next/navigation";
 
 export default function CreateAppDialog({
@@ -216,23 +209,6 @@ export default function CreateAppDialog({
                               <div className="flex items-center space-x-2">
                                 <Arbitrum className="h-6 w-6" />
                                 <p>Arbitrum Sepolia</p>
-                                <TooltipProvider>
-                                  <Tooltip delayDuration={250}>
-                                    <TooltipTrigger>
-                                      <Badge className="bg-green-500 hover:bg-green-500">
-                                        gas sponsorship{" "}
-                                        <InfoIcon className="h-4 w-4 ml-1" />
-                                      </Badge>
-                                    </TooltipTrigger>
-                                    <TooltipContent
-                                      side="bottom"
-                                      className="max-w-[300px]"
-                                    >
-                                      We cover transactions costs for
-                                      this blockchain.
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
                               </div>
                             </SelectItem>
                             <SelectItem value="polygon-amoy" disabled>
