@@ -10,10 +10,16 @@ export default function ValueBox({
   value,
   copyText,
   basic,
+  label,
+  description,
+  isLoading,
 }: {
   value: string;
   copyText?: string;
   basic?: boolean;
+  label?: string;
+  description?: string;
+  isLoading?: boolean;
 }) {
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
@@ -35,20 +41,35 @@ export default function ValueBox({
 
   return (
     <div className="flex space-x-2 flex-1 w-full">
-      <div
-        className={cn(
-          "flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm",
-          { "border border-input": !basic }
+      <div className="w-full space-y-1">
+        {label && <h3>{label}</h3>}
+        {description && (
+          <p className="text-sm text-muted-foreground">
+            {description}
+          </p>
         )}
-      >
-        <p className="truncate">{value}</p>
+
+        <div
+          className={cn(
+            "flex h-10 w-full rounded-md bg-background px-3 py-2 text-sm",
+            {
+              "border border-input": !basic,
+              "bg-primary/20 animate-pulse": isLoading,
+            }
+          )}
+        >
+          {value && <p className="truncate">{value}</p>}
+        </div>
       </div>
 
       {copyText && (
         <Button
-          className={cn({
-            "bg-green-500 hover:bg-green-500": isCopied,
-          })}
+          className={cn(
+            {
+              "bg-green-500 hover:bg-green-500": isCopied,
+            },
+            "self-end"
+          )}
           onClick={handleCopy}
         >
           {isCopied ? (
