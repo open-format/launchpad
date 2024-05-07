@@ -29,5 +29,14 @@ type ErrorMessages = {
 
 // Subgraph Data
 interface AppData {
-  apps: [{ id: string; name: string; createdAt: string }];
+  apps: App[];
 }
+
+type App = {
+  id: string;
+  name: string;
+  createdAt: string;
+  xpToken: {
+    id: string;
+  };
+};
