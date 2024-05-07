@@ -1,0 +1,19 @@
+{
+  "git": {
+    "commitMessage": "Release v${version}",
+    "tagName": "v${version}",
+    "requireCleanWorkingDir": false,
+    "addFiles": ["package.json", "CHANGELOG.md"]
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Release v${version}"
+  },
+  "hooks": {
+    "before:init": ["git pull"],
+    "after:bump": "bunx auto-changelog -p"
+  },
+  "npm": {
+    "publish": false
+  }
+}
