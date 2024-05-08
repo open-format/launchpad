@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateAppForm } from "@/forms/create-app-form";
+import { CreateBadgeForm } from "@/forms/create-badge-form";
 import { useState } from "react";
 
 export default function CreateBadgeDialog() {
@@ -26,12 +26,10 @@ export default function CreateBadgeDialog() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create dApp</DialogTitle>
-          <DialogDescription>
-            Create a new decentralised app.
-          </DialogDescription>
+          <DialogTitle>Create Badge</DialogTitle>
+          <DialogDescription>Create a badge.</DialogDescription>
         </DialogHeader>
-        <CreateAppForm onSubmit={toggle} />
+        <CreateBadgeForm onSubmit={toggle} />
       </DialogContent>
     </Dialog>
   );
