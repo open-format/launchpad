@@ -336,3 +336,33 @@ export async function getUserApps() {
     throw new Error(error.message);
   }
 }
+
+export async function getApp(app: string) {
+  try {
+    const query = gql`
+      query getSingleApp($app: ID!) {
+        app(id: $app) {
+          id
+          name
+          xpToken {
+            id
+          }
+          badges {
+            id
+            name
+          }
+        }
+      }
+    `;
+
+    const data = await request<{ app: App }>(
+      process.env.SUBGRAPH_URL!,
+      query,
+      { app }
+    );
+
+    return data.app;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
