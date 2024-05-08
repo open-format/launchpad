@@ -2,15 +2,21 @@
 
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
 import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
 import { handleTransaction } from "@/lib/transactions";
 import { getAccountClient } from "@/lib/viem/config";
+import { ThirdwebStorage } from "@thirdweb-dev/storage";
 import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
 import { parseEther, stringToHex } from "viem";
+
+const storage = new ThirdwebStorage({
+  secretKey: process.env.THIRDWEB_SECRET, // You can get one from dashboard settings
+});
 
 // @TODO: Implement magic link
 export async function signInWithOtp({ email }: { email: string }) {
@@ -334,5 +340,113 @@ export async function getUserApps() {
     return data.apps;
   } catch (error: any) {
     throw new Error(error.message);
+  }
+}
+
+export async function uploadFileToIPFS(formData: FormData) {
+  const file = formData.get("file") as File;
+
+  // Convert the file to a Buffer
+  const buffer = await file.arrayBuffer(); // Convert file to ArrayBuffer
+  const fileBuffer = Buffer.from(buffer); // Convert ArrayBuffer to Buffer
+
+  const ipfsHash = await storage.upload(fileBuffer, {
+    uploadWithoutDirectory: true,
+  });
+
+  return ipfsHash;
+}
+
+export async function uploadJSONToIPFS(data: any) {
+  const ipfsHash = await storage.upload(data, {
+    uploadWithoutDirectory: true,
+  });
+
+  return ipfsHash;
+}
+
+export async function validatePassword(password: string) {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user?.id)
+      .maybeSingle();
+
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
+
+    return true;
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+
+export async function createBadge(
+  appId: string,
+  name: string,
+  password: string,
+  metadataURI: string
+) {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user?.id)
+      .maybeSingle();
+
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
+
+    console.log({ decrypted });
+
+    const badgeId = await handleTransaction(
+      decrypted.privateKey,
+      "0xb639b0eab8e91ed26de47a546dc119657d3f107b",
+      badgeFactoryAbi,
+      "createERC721",
+      [
+        name,
+        "BADGE",
+        decrypted.address,
+        1000,
+        stringToHex("Base", { size: 32 }),
+      ],
+      "Created"
+    );
+
+    return metadataURI;
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
   }
 }
