@@ -366,3 +366,29 @@ export async function getApp(app: string) {
     throw new Error(error.message);
   }
 }
+
+export async function deleteAccount() {
+  try {
+    const supabase = await createSupabaseServerClient(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(user.id);
+
+    if (error) {
+      console.log({ deleteuser: error });
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+
+  redirect("/register");
+}
