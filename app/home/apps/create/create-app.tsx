@@ -42,6 +42,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { Arbitrum, Polygon } from "@thirdweb-dev/chain-icons";
 import { toast } from "sonner";
 
+import UnlockKeyFormField from "@/components/unlock-key-form-field";
 import { useRouter } from "next/navigation";
 
 export default function CreateAppDialog({
@@ -202,27 +203,7 @@ export default function CreateAppDialog({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Password"
-                      {...field}
-                      type="password"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    This is the password for your web3 account.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+            <UnlockKeyFormField form={form} />
             {isSubmitting ? (
               <Button disabled>
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
