@@ -77,10 +77,12 @@ export default function CreateAppDialog({
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
-    //@TODO: Call createApp server action here.
-    //@TODO: Set returned APP_ID in state.
     try {
       const res = await createApp(data.name, data.password);
+      toast.success("App successfully created!", {
+        description: "You can now create badges for this dApp.",
+        duration: 5000,
+      });
       router.push(`apps/${res.appId}`);
     } catch (e: any) {
       if (e.message.includes("password")) {
