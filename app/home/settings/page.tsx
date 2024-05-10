@@ -23,9 +23,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
-import Link from "next/link";
 import { CreateAccountForm } from "./create-account-form";
 import { CreateAPIKey } from "./create-api-key";
+import DeleteAccountForm from "./delete-account-form";
 import RevealKey from "./reveal-key-form";
 
 async function getData() {
@@ -112,9 +112,7 @@ export default async function SettingsPage() {
                   servers.
                 </DialogDescription>
               </DialogHeader>
-              <Link href="/">
-                <Button variant="destructive">Delete Account</Button>
-              </Link>
+              <DeleteAccountForm />
             </DialogContent>
           </Dialog>
         </CardContent>

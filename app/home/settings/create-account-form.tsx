@@ -14,17 +14,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import UnlockKeyFormField from "@/components/unlock-key-form-field";
 import ValueBox from "@/components/value-box";
 import { cn } from "@/lib/utils";
 import { useAccountStore } from "@/stores";
@@ -118,25 +111,7 @@ export function CreateAccountForm() {
               className="w-full space-y-4"
               onSubmit={form.handleSubmit(handleFormSubmission)}
             >
-              <div>
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Password"
-                          {...field}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <UnlockKeyFormField form={form} />
               <Button type="submit">Create web3 account</Button>
             </form>
           </Form>

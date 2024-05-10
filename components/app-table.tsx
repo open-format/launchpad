@@ -26,7 +26,7 @@ interface AppTableProps {
 
 export default function AppTable({ apps }: AppTableProps) {
   if (!apps) {
-    return <div>No apps found.</div>;
+    return <div></div>;
   }
   return (
     <Table>
@@ -41,8 +41,8 @@ export default function AppTable({ apps }: AppTableProps) {
       </TableHeader>
       <TableBody>
         {apps &&
-          apps.map((app) => (
-            <TableRow>
+          apps.map((app, i) => (
+            <TableRow key={i}>
               <TableCell className="font-medium">
                 {app.name}
               </TableCell>

@@ -14,15 +14,8 @@ import { EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { revealAccountKey } from "@/app/_actions";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
+import UnlockKeyFormField from "@/components/unlock-key-form-field";
 import { useAccountStore } from "@/stores";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -95,33 +88,15 @@ export default function RevealKeyForm() {
             ) : (
               <>
                 <DialogDescription>
-                  Please enter your password for your web3 account
+                  Reveal your private key to use your web3 account in
+                  other tools and services.
                 </DialogDescription>
                 <Form {...form}>
                   <form
                     className="w-full space-y-4"
                     onSubmit={form.handleSubmit(handleFormSubmission)}
                   >
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input
-                                autoComplete="password"
-                                placeholder="Password"
-                                {...field}
-                                type="password"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <UnlockKeyFormField form={form} />
                     {isSubmitting ? (
                       <Button disabled>
                         <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />

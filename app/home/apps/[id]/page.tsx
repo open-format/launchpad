@@ -31,7 +31,7 @@ export default async function ViewAppPage({
 }: {
   params: { id: string };
 }) {
-  const app = await getData(params.id);
+  const app = await getData(params.id.toLowerCase());
 
   return (
     <div className="space-y-5">

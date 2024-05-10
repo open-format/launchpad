@@ -1,16 +1,8 @@
 import { getAccountAddress, getUserApps } from "@/app/_actions";
 import AppTable from "@/components/app-table";
+import FlashCard from "@/components/flash-card";
 import GetStarted from "@/components/get-started";
 import { buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import CreateAppDialog from "./create/create-app";
 
@@ -41,34 +33,23 @@ export default async function AppsPage() {
 
   return (
     <div className="space-y-4">
-      <GetStarted />
       {!account && (
-        <Card className="border-destructive">
-          <CardHeader>
-            <div className="flex space-x-2">
-              <AlertTriangle className="text-destructive" />
-              <CardTitle>Action Required</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <CardDescription>
-              You need to create a web3 account before creating any
-              dApp or badges.
-            </CardDescription>
-          </CardContent>
-          <CardFooter>
-            <Link
-              className={buttonVariants({})}
-              href="/home/settings"
-            >
-              Settings
-            </Link>
-          </CardFooter>
-        </Card>
+        <FlashCard
+          title="Action Required"
+          description="You need to create a web3 account before creating any dApp
+        or badges."
+        >
+          <Link className={buttonVariants()} href="/home/settings">
+            Settings
+          </Link>
+        </FlashCard>
       )}
-      <div className="flex justify-between">
-        <h1>Apps</h1>
-        <CreateAppDialog account={account} />
+      <div className="flex justify-between flex-col space-y-2">
+        <div className="flex justify-between">
+          <h1>Apps</h1>
+          <CreateAppDialog account={account} />
+        </div>
+        <GetStarted />
       </div>
       {/* @ts-ignore */}
       <AppTable apps={apps} />
