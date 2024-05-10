@@ -5,6 +5,7 @@ import { Manrope as FontSans } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+import Script from "next/script";
 import "./globals.css";
 
 const fontSans = FontSans({
@@ -36,6 +37,13 @@ export default function RootLayout({
             toastOptions={{ classNames: { error: "bg-red-500" } }}
           />
         </ThemeProvider>
+        <Script
+          defer
+          src="https://api.pirsch.io/pa.js"
+          id="pianjs"
+          data-code={process.env.NEXT_PUBLIC_PIRSH_DATA_CODE}
+          data-dev="example.com"
+        />
       </body>
     </html>
   );
