@@ -120,7 +120,7 @@ export function CreateAppForm({
             )}
           />
         </div>
-        <Button type="submit">Create dApp</Button>
+        <Button type="submit">Create app</Button>
       </form>
     </Form>
   );

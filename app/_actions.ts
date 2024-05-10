@@ -10,6 +10,7 @@ import { getAccountClient } from "@/lib/viem/config";
 import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
+import { Resend } from "resend";
 import { parseEther, stringToHex } from "viem";
 
 // @TODO: Implement magic link
@@ -364,5 +365,59 @@ export async function getApp(app: string) {
     return data.app;
   } catch (error: any) {
     throw new Error(error.message);
+  }
+}
+
+export async function deleteAccount() {
+  try {
+    const supabase = await createSupabaseServerClient(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(user.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+
+  redirect("/register");
+}
+
+export async function addUserToAudience() {
+  try {
+    const audienceId = process.env.RESEND_AUDIENCE_ID;
+
+    if (!audienceId) {
+      return;
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const supabase = await createSupabaseServerClient();
+    const user = await supabase.auth.getUser();
+
+    if (!user || !user?.data?.user?.email) {
+      return;
+    }
+
+    const result = await resend.contacts.create({
+      email: user.data.user?.email,
+      firstName: user.data.user?.user_metadata["name"].split(" ")[0],
+      unsubscribed: false,
+      audienceId,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
   }
 }
