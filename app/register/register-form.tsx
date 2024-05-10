@@ -1,134 +1,54 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import useSupabaseClient from "@/lib/supabase/client";
-import { LoginUserInput, loginUserSchema } from "@/lib/user-schema";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { GitHubLogoIcon, ReloadIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { signInWithOtp } from "../_actions";
+import { useState } from "react";
 
 export const RegisterForm = () => {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [emailSignUpValue, setEmailSignUpValue] =
+    useState<boolean>(false);
+
   const supabase = useSupabaseClient();
 
-  const form = useForm<LoginUserInput>({
-    resolver: zodResolver(loginUserSchema),
-  });
-
-  const onSubmitHandler: SubmitHandler<LoginUserInput> = async (
-    values
-  ) => {
-    startTransition(async () => {
-      const result = await signInWithOtp(values);
-
-      const { error } = JSON.parse(result);
-      if (error?.message) {
-        setError(error.message);
-        toast.error(error.message);
-        console.log("Error message", error.message);
-        return;
-      }
-
-      setError("");
-      toast.success("successfully logged in");
-      router.push("/");
-    });
-  };
-
-  const loginWithGitHub = () => {
+  function loginWithGitHub() {
+    setIsLoading(true);
     supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `${location.origin}/auth/callback?signUp=${emailSignUpValue}`,
       },
     });
-  };
+  }
 
   return (
-    <Form {...form}>
-      <a
-        onClick={loginWithGitHub}
-        className={cn("hover:cursor-pointer", buttonVariants())}
-      >
-        <GitHubLogoIcon className="mr-2 h-4 w-4" />
-        Continue With Github
-      </a>
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-strong"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-background px-2 text-sm text-muted-foreground">
-            OR
-          </span>
-        </div>
+    <div>
+      <div className="flex space-x-2">
+        <Checkbox
+          checked={emailSignUpValue}
+          onCheckedChange={() => setEmailSignUpValue((s) => !s)}
+        />
+        <label
+          htmlFor="terms"
+          className="text-sm font-medium leading-none"
+        >
+          Sign up to product updates
+        </label>
       </div>
-      <form
-        className="w-full space-y-2"
-        onSubmit={form.handleSubmit(onSubmitHandler)}
-      >
-        <FormField
-          control={form.control}
-          name="email"
-          disabled={true}
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="Email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="emailSignup"
-          render={({ field }) => (
-            <FormItem className="flex-1">
-              <FormControl>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    disabled={true}
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <label
-                    htmlFor="terms"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Sign up to product updates
-                  </label>
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={true}>
-          {isPending ? "loading..." : "Sign In"}
-        </Button>
-      </form>
+      <Button disabled={isLoading} onClick={loginWithGitHub}>
+        {isLoading ? (
+          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <GitHubLogoIcon className="mr-2 h-4 w-4" />
+        )}
+        Continue With Github
+      </Button>
       <div className="my-8 self-center text-sm text-center">
         <span className="text-foreground-light">
-          Have an account?
+          Already have an account?
         </span>{" "}
         <Link
           className="underline text-foreground hover:text-foreground-light transition"
@@ -137,6 +57,6 @@ export const RegisterForm = () => {
           Sign In Now
         </Link>
       </div>
-    </Form>
+    </div>
   );
 };
