@@ -2,6 +2,7 @@
 
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { trackEvent } from "@/lib/analytics";
 import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
@@ -69,6 +70,8 @@ export async function createWeb3Account(
       .then((response) => response.json())
       .catch((err) => console.error(err));
   }
+
+  await trackEvent({ event_name: "Create web3 Account" });
 
   return {
     address: wallet.address,
@@ -141,6 +144,7 @@ export async function revealAccountKey(
     if (!decrypted) {
       throw new Error("Error decrypting account, please try again.");
     }
+    await trackEvent({ event_name: "Reveal Account Key" });
 
     return {
       data: { accountKey: decrypted.privateKey },
@@ -212,6 +216,8 @@ export async function createAPIKey(password: string) {
       .then((response) => response.json())
       .catch((err) => console.error(err));
 
+    await trackEvent({ event_name: "Generate API Key" });
+
     return verify.api_key;
   } catch (error: any) {
     if (
@@ -274,6 +280,8 @@ export async function createApp(name: string, password: string) {
       ],
       "Created"
     );
+
+    await trackEvent({ event_name: "Create dApp" });
 
     return {
       appId: appId,
