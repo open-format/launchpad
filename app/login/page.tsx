@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import getUserSession from "@/lib/getUserSession";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -24,11 +25,43 @@ export default async function LoginPage() {
         <span>OPENFORMAT</span>
       </div>
       <div className="hidden bg-muted lg:flex flex-col justify-between h-screen border-l p-5">
-        <div className="space-y-2 my-24">
+        <div className="space-y-2 my-24 flex flex-col justify-between">
           <h1 className="text-5xl max-w-[400px]">
             Welcome to the Launchpad 🚀
           </h1>
           <h3>The no-code blockchain rewards platform.</h3>
+          <div>
+            <p className="font-semibold">
+              What you can do with the launchpad:
+            </p>
+            <ul className="space-y-2">
+              <li>Create and manage web3 account</li>
+              <li>Create and manage badges</li>
+              <li>
+                Mission Builder
+                <Badge className="ml-2">Coming soon</Badge>
+              </li>
+              <li className="flex items-center">
+                <div>
+                  Economy Modeling
+                  <p className="text-xs">
+                    Model your economy using some tools.
+                  </p>
+                </div>
+                <Badge className="ml-2">Coming soon</Badge>
+              </li>
+              <li className="flex items-center">
+                <div>
+                  Micro-transactions
+                  <p className="text-xs">
+                    Monetise your applications using on-chains
+                    credits.
+                  </p>
+                </div>
+                <Badge className="ml-2">Coming soon</Badge>
+              </li>
+            </ul>
+          </div>
         </div>
         <div className="flex flex-col items-center space-x-2 m-3 justify-center">
           <blockquote className="space-y-2 text-left">
