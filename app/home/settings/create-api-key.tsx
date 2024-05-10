@@ -14,15 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
+import UnlockKeyFormField from "@/components/unlock-key-form-field";
 import ValueBox from "@/components/value-box";
 import { getErrorMessage } from "@/lib/errors";
 import { useAccountStore } from "@/stores";
@@ -100,9 +93,8 @@ export function CreateAPIKey() {
           <DialogHeader>
             <DialogTitle>Generate API Key</DialogTitle>
             <DialogDescription>
-              API Keys are generated from your web3 account. You are
-              required to add a password so we can generate your API
-              Key.
+              Generate an API Key to use the OPENFORMAT API and
+              no-code nodes.
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
@@ -110,25 +102,8 @@ export function CreateAPIKey() {
               className="w-full space-y-4"
               onSubmit={form.handleSubmit(handleFormSubmission)}
             >
-              <div>
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Password"
-                          {...field}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <UnlockKeyFormField form={form} />
+
               {isSubmitting ? (
                 <Button disabled>
                   <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />

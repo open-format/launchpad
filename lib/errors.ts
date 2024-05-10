@@ -1,6 +1,6 @@
 export const ERROR_MESSAGES: ErrorMessages = {
   "gas required exceeds allowance (0)":
-    "You need gas to pay for the transaction fees.",
+    "You do not have enough gas to cover this transaction. You can obtain gas from a faucet, or contact us on Discord.",
   "Error: App_nameAlreadyUsed()": "App name must be unique.",
 };
 
