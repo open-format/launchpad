@@ -268,7 +268,7 @@ export async function createApp(name: string, password: string) {
 
     const xpAddress = await handleTransaction(
       decrypted.privateKey,
-      appId,
+      appId as `0x${string}`,
       tokenFactoryAbi,
       "createERC20",
       [
