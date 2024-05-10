@@ -26,7 +26,7 @@ interface AppTableProps {
 
 export default function AppTable({ apps }: AppTableProps) {
   if (!apps) {
-    return <div>No apps found.</div>;
+    return <div></div>;
   }
   return (
     <Table>

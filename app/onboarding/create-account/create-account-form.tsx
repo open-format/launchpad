@@ -14,17 +14,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import UnlockKeyFormField from "@/components/unlock-key-form-field";
 import ValueBox from "@/components/value-box";
 import { URLS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -123,25 +116,7 @@ export function CreateAccountForm() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div>
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Password"
-                          {...field}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <UnlockKeyFormField form={form} />
             </CardContent>
             <CardFooter className="justify-between">
               <Link
