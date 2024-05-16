@@ -44,17 +44,17 @@ export default function GetStarted() {
   return (
     <div className="space-y-2">
       {isVisible && (
-        <>
+        <div className="border rounded-md p-4">
           <div className="flex justify-between items-center">
             <h2>Your first week in OPENFORMAT</h2>
             <X onClick={() => setIsVisible(false)} />
           </div>
-          <div className="grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3 px-12">
             {ITEMS.map((item, i) => (
               <GridItem key={i} item={item} />
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -62,7 +62,7 @@ export default function GetStarted() {
 
 function GridItem({ item }: { item: Item }) {
   return (
-    <Card className="hover:bg-secondary/80">
+    <Card className="hover:bg-secondary/80 border-none">
       <Link href={item.href}>
         <CardHeader>
           <CardTitle>{item.title}</CardTitle>

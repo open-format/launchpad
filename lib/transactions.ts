@@ -38,10 +38,10 @@ export async function handleTransaction(
     return logs[0].args.id;
   } catch (error: any) {
     if (error instanceof BaseError) {
-      if (error.metaMessages) {
-        throw new Error(error.metaMessages[0]);
-      } else {
+      if (error.details) {
         throw new Error(error.details);
+      } else if (error.metaMessages) {
+        throw new Error(error.metaMessages[0]);
       }
     } else {
       throw new Error(error.message);

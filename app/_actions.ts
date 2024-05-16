@@ -2,7 +2,7 @@
 
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
-import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
+import { trackEvent } from "@/lib/analytics";
 import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
@@ -12,6 +12,7 @@ import { ThirdwebStorage } from "@thirdweb-dev/storage";
 import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
+import { Resend } from "resend";
 import { parseEther, stringToHex } from "viem";
 
 const storage = new ThirdwebStorage({
@@ -74,6 +75,8 @@ export async function createWeb3Account(
       .then((response) => response.json())
       .catch((err) => console.error(err));
   }
+
+  await trackEvent({ event_name: "Create web3 Account" });
 
   return {
     address: wallet.address,
@@ -146,6 +149,7 @@ export async function revealAccountKey(
     if (!decrypted) {
       throw new Error("Error decrypting account, please try again.");
     }
+    await trackEvent({ event_name: "Reveal Account Key" });
 
     return {
       data: { accountKey: decrypted.privateKey },
@@ -217,6 +221,8 @@ export async function createAPIKey(password: string) {
       .then((response) => response.json())
       .catch((err) => console.error(err));
 
+    await trackEvent({ event_name: "Generate API Key" });
+
     return verify.api_key;
   } catch (error: any) {
     if (
@@ -267,7 +273,7 @@ export async function createApp(name: string, password: string) {
 
     const xpAddress = await handleTransaction(
       decrypted.privateKey,
-      appId,
+      appId as `0x${string}`,
       tokenFactoryAbi,
       "createERC20",
       [
@@ -279,6 +285,8 @@ export async function createApp(name: string, password: string) {
       ],
       "Created"
     );
+
+    await trackEvent({ event_name: "Create dApp" });
 
     return {
       appId: appId,
@@ -338,6 +346,36 @@ export async function getUserApps() {
     );
 
     return data.apps;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+}
+
+export async function getApp(app: string) {
+  try {
+    const query = gql`
+      query getSingleApp($app: ID!) {
+        app(id: $app) {
+          id
+          name
+          xpToken {
+            id
+          }
+          badges {
+            id
+            name
+          }
+        }
+      }
+    `;
+
+    const data = await request<{ app: App }>(
+      process.env.SUBGRAPH_URL!,
+      query,
+      { app }
+    );
+
+    return data.app;
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -449,4 +487,66 @@ export async function createBadge(
       throw new Error(error.message);
     }
   }
+}
+
+export async function addUserToAudience() {
+  try {
+    const audienceId = process.env.RESEND_AUDIENCE_ID;
+
+    if (!audienceId) {
+      return;
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const supabase = await createSupabaseServerClient();
+    const user = await supabase.auth.getUser();
+
+    if (!user || !user?.data?.user?.email) {
+      return;
+    }
+
+    const result = await resend.contacts.create({
+      email: user.data.user?.email,
+      firstName: user.data.user?.user_metadata["name"].split(" ")[0],
+      unsubscribed: false,
+      audienceId,
+    });
+
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+export async function deleteAccount() {
+  try {
+    const supabase = await createSupabaseServerClient(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(user.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+
+  redirect("/register");
 }

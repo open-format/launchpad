@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import ChainName from "./chain-name";
-import { Button } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import ValueBox from "./value-box";
 
 type App = {
@@ -26,7 +26,7 @@ interface AppTableProps {
 
 export default function AppTable({ apps }: AppTableProps) {
   if (!apps) {
-    return <div>No apps found.</div>;
+    return <div></div>;
   }
   return (
     <Table>
@@ -41,8 +41,8 @@ export default function AppTable({ apps }: AppTableProps) {
       </TableHeader>
       <TableBody>
         {apps &&
-          apps.map((app) => (
-            <TableRow>
+          apps.map((app, i) => (
+            <TableRow key={i}>
               <TableCell className="font-medium">
                 {app.name}
               </TableCell>
@@ -63,7 +63,12 @@ export default function AppTable({ apps }: AppTableProps) {
                 />
               </TableCell>
               <TableCell className="text-right">
-                <Button disabled>View (WIP)</Button>
+                <Link
+                  className={buttonVariants()}
+                  href={`apps/${app.id}`}
+                >
+                  View
+                </Link>
               </TableCell>
             </TableRow>
           ))}
