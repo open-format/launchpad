@@ -2,6 +2,7 @@
 
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
 import { trackEvent } from "@/lib/analytics";
 import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
@@ -458,11 +459,10 @@ export async function createBadge(
       password
     );
 
-    console.log({ decrypted });
-
+    // @TODO Use ERC721Badge when ready.
     const badgeId = await handleTransaction(
       decrypted.privateKey,
-      "0xb639b0eab8e91ed26de47a546dc119657d3f107b",
+      appId as `0x${string}`,
       badgeFactoryAbi,
       "createERC721",
       [
@@ -475,7 +475,7 @@ export async function createBadge(
       "Created"
     );
 
-    return metadataURI;
+    return badgeId;
   } catch (error: any) {
     console.log({ error });
     if (
