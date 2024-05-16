@@ -1,5 +1,3 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -29,18 +27,28 @@ import {
 import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
+
+import { createBadge } from "@/app/_actions";
+import UnlockKeyFormField from "@/components/unlock-key-form-field";
+import { URLS } from "@/lib/constants";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
 const FormSchema = z.object({
-  name: z.string().min(3),
+  name: z.string().min(3).max(32),
   description: z.string().min(3),
   type: z.string(),
   password: z.string(),
   image: z.any(),
 });
 
-export function CreateBadgeForm() {
+interface CreateBadgeFormProps {
+  closeDialog: () => void;
+}
+
+export function CreateBadgeForm({
+  closeDialog,
+}: CreateBadgeFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
@@ -67,14 +75,25 @@ export function CreateBadgeForm() {
 
       const metadataURI = await uploadJSONToIPFS(metadata);
 
-      // const badge = await createBadge(
-      //   params.id as string,
-      //   data.name,
-      //   data.password,
-      //   metadataURI
-      // );
+      await createBadge(
+        params.id as string,
+        data.name,
+        data.password,
+        metadataURI
+      );
 
-      // return badge;
+      toast.success(`Badge successfully created!`, {
+        description: "You can reward it to you users.",
+        action: {
+          label: "View docs",
+          onClick: () =>
+            window.open(`${URLS.docs}/functions/rewards`, "_blank"),
+        },
+        duration: 5000,
+      });
+
+      form.reset();
+      closeDialog();
     } catch (e: any) {
       if (e.message.includes("password")) {
         form.setError("password", {
@@ -182,19 +201,7 @@ export function CreateBadgeForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <UnlockKeyFormField form={form} />
         </div>
         {form.formState.isSubmitting ? (
           <Button disabled>

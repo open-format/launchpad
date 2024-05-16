@@ -29,7 +29,7 @@ export default function CreateBadgeDialog() {
           <DialogTitle>Create Badge</DialogTitle>
           <DialogDescription>Create a badge.</DialogDescription>
         </DialogHeader>
-        <CreateBadgeForm onSubmit={toggle} />
+        <CreateBadgeForm closeDialog={toggle} />
       </DialogContent>
     </Dialog>
   );

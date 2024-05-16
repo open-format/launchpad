@@ -1,4 +1,5 @@
 import { getApp } from "@/app/_actions";
+import BadgeGrid from "@/components/badge-grid";
 import ChainName from "@/components/chain-name";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
 import { InfoIcon } from "lucide-react";
+import CreateBadgeDialog from "./create-badge";
 
 async function getData(app: string) {
   try {
@@ -86,11 +88,11 @@ export default async function ViewAppPage({
           )}
         </CardContent>
       </Card>
-      {/* <div className="flex justify-between">
+      <div className="flex justify-between">
         <h1>Badges</h1>
         <CreateBadgeDialog />
       </div>
-      <BadgeGrid /> */}
+      <BadgeGrid />
     </div>
   );
 }
