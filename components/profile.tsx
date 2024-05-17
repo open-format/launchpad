@@ -62,7 +62,7 @@ export default function Profile({ user }: { user: User }) {
           <p className="font-bold truncate text-xs">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link href="/home/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
