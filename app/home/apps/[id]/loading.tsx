@@ -1,11 +1,7 @@
 import ChainName from "@/components/chain-name";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -15,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
 import { InfoIcon } from "lucide-react";
+import CreateBadgeDialog from "./create-badge";
 
 export default async function Loading() {
   return (
@@ -22,7 +19,7 @@ export default async function Loading() {
       <Skeleton className="w-[250px] h-[30px]" />
       <Card>
         <CardHeader>
-          <CardTitle>Keys</CardTitle>
+          <h2>Keys</h2>
           <div className="flex space-x-2">
             <ChainName chain="arbitrumSepolia" />
             <TooltipProvider>
@@ -63,11 +60,25 @@ export default async function Loading() {
           </div>
         </CardContent>
       </Card>
-      {/* <div className="flex justify-between">
-        <h1>Badges</h1>
-        <CreateBadgeDialog />
-      </div>
-      <BadgeGrid /> */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between">
+            <h2>Badges</h2>
+            <CreateBadgeDialog />
+          </div>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {new Array(4).fill("").map((_, i) => (
+            <AspectRatio
+              key={i}
+              ratio={1 / 1.2}
+              className="bg-muted rounded-md animate-pulse"
+            >
+              <Skeleton />
+            </AspectRatio>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

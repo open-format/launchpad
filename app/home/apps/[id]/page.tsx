@@ -2,12 +2,7 @@ import { getApp } from "@/app/_actions";
 import BadgeGrid from "@/components/badge-grid";
 import ChainName from "@/components/chain-name";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
@@ -44,7 +39,7 @@ export default async function ViewAppPage({
       )}
       <Card>
         <CardHeader>
-          <CardTitle>Keys</CardTitle>
+          <h2>Keys</h2>
           <div className="flex space-x-2">
             <ChainName chain="arbitrumSepolia" />
             <TooltipProvider>
@@ -88,11 +83,19 @@ export default async function ViewAppPage({
           )}
         </CardContent>
       </Card>
-      <div className="flex justify-between">
-        <h1>Badges</h1>
-        <CreateBadgeDialog />
-      </div>
-      <BadgeGrid />
+      <Card>
+        {Boolean(app?.badges?.length) && (
+          <CardHeader>
+            <div className="flex justify-between">
+              <h2>Badges</h2>
+              <CreateBadgeDialog />
+            </div>
+          </CardHeader>
+        )}
+        <CardContent>
+          <BadgeGrid badges={app?.badges} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
