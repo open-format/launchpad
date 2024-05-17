@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 import "./globals.css";
+import PrivyProvider from "./providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -32,10 +33,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster
-            toastOptions={{ classNames: { error: "bg-red-500" } }}
-          />
+          <PrivyProvider>
+            {children}
+            <Toaster
+              toastOptions={{ classNames: { error: "bg-red-500" } }}
+            />
+          </PrivyProvider>
         </ThemeProvider>
         <Script
           defer

@@ -11,6 +11,7 @@
   "dependencies": {
     "@changesets/cli": "^2.27.1",
     "@hookform/resolvers": "^3.3.4",
+    "@privy-io/react-auth": "latest",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",

@@ -9,13 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useWallets } from "@privy-io/react-auth";
 import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { createApp } from "@/app/_actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,8 +42,13 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { Arbitrum, Polygon } from "@thirdweb-dev/chain-icons";
 import { toast } from "sonner";
 
+import { appFactoryAbi } from "@/abis/AppFactory";
 import UnlockKeyFormField from "@/components/unlock-key-form-field";
+import { contractAddresses } from "@/lib/constants";
+import { handleTransaction } from "@/lib/transactions";
 import { useRouter } from "next/navigation";
+import { createWalletClient, custom, stringToHex } from "viem";
+import { arbitrumSepolia } from "viem/chains";
 
 export default function CreateAppDialog({
   account,
@@ -70,22 +75,44 @@ export default function CreateAppDialog({
   });
 
   const {
-    reset,
     setError,
     formState: { isSubmitting },
   } = form;
 
+  const { wallets } = useWallets();
+
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
+    console.log({ wallets });
     try {
-      const res = await createApp(data.name, data.password);
+      const wallet = wallets[0]; // Replace this with your desired wallet
+      await wallet.switchChain(arbitrumSepolia.id);
+
+      const provider = await wallet.getEthereumProvider();
+
+      const walletClient = createWalletClient({
+        chain: arbitrumSepolia,
+        transport: custom(provider),
+      });
+
+      console.log({ walletClient });
+
+      await handleTransaction(
+        walletClient,
+        contractAddresses.APP_FACTORY,
+        appFactoryAbi,
+        "create",
+        [stringToHex(data.name, { size: 32 }), wallet.address],
+        "Created"
+      );
+
       toast.success("App successfully created!", {
         description: "You can now create badges for this dApp.",
         duration: 5000,
       });
-      router.push(`apps/${res.appId}`);
     } catch (e: any) {
+      console.log({ e });
       if (e.message.includes("password")) {
         setError("password", {
           type: "custom",

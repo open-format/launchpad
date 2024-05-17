@@ -1,18 +1,14 @@
 "use server";
 
-import { appFactoryAbi } from "@/abis/AppFactory";
-import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
 import { trackEvent } from "@/lib/analytics";
-import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
-import { handleTransaction } from "@/lib/transactions";
 import { getAccountClient } from "@/lib/viem/config";
+import { ConnectedWallet } from "@privy-io/react-auth";
 import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
 import { Resend } from "resend";
-import { parseEther, stringToHex } from "viem";
 
 // @TODO: Implement magic link
 export async function signInWithOtp({ email }: { email: string }) {
@@ -231,63 +227,45 @@ export async function createAPIKey(password: string) {
   }
 }
 
-export async function createApp(name: string, password: string) {
+export async function createApp(
+  name: string,
+  walletClient: ConnectedWallet
+) {
   try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    console.log({ walletClient });
 
-    if (!user) {
-      redirect("/login");
-    }
+    // const appId = await handleTransaction(
+    //   provider,
+    //   contractAddresses.APP_FACTORY,
+    //   appFactoryAbi,
+    //   "create",
+    //   [stringToHex(name, { size: 32 }), wallet.address],
+    //   "Created"
+    // );
 
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user.id)
-      .maybeSingle();
+    // const xpAddress = await handleTransaction(
+    //   decrypted.privateKey,
+    //   appId as `0x${string}`,
+    //   tokenFactoryAbi,
+    //   "createERC20",
+    //   [
+    //     name,
+    //     "XP",
+    //     18,
+    //     parseEther("0"),
+    //     stringToHex("Base", { size: 32 }),
+    //   ],
+    //   "Created"
+    // );
 
-    if (!wallet) {
-      throw new Error("Account not found, please try again.");
-    }
-
-    const decrypted = await ethers.Wallet.fromEncryptedJson(
-      wallet.data.keystore,
-      password
-    );
-
-    const appId = await handleTransaction(
-      decrypted.privateKey,
-      contractAddresses.APP_FACTORY,
-      appFactoryAbi,
-      "create",
-      [stringToHex(name, { size: 32 }), decrypted.address],
-      "Created"
-    );
-
-    const xpAddress = await handleTransaction(
-      decrypted.privateKey,
-      appId as `0x${string}`,
-      tokenFactoryAbi,
-      "createERC20",
-      [
-        name,
-        "XP",
-        18,
-        parseEther("0"),
-        stringToHex("Base", { size: 32 }),
-      ],
-      "Created"
-    );
-
-    await trackEvent({ event_name: "Create dApp" });
+    // await trackEvent({ event_name: "Create dApp" });
 
     return {
-      appId: appId,
-      xpAddress: xpAddress,
+      appId: true,
+      // xpAddress: xpAddress,
     };
   } catch (error: any) {
+    console.log({ error });
     if (
       error.code === "INVALID_ARGUMENT" &&
       error.argument === "password"

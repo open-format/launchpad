@@ -1,10 +1,10 @@
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
 import { BaseError, parseEventLogs } from "viem";
-import { getAccountClient, publicClient } from "./viem/config";
+import { publicClient } from "./viem/config";
 
 export async function handleTransaction(
-  pk: string,
+  walletClient: any,
   address: `0x${string}`,
   abi: typeof appFactoryAbi | typeof tokenFactoryAbi,
   functionName: "create" | "createERC20",
@@ -12,17 +12,14 @@ export async function handleTransaction(
   eventName: "Created"
 ) {
   try {
-    const { account, accountClient } = getAccountClient(pk);
-
     const { request } = await publicClient.simulateContract({
-      account,
       address,
       abi,
       functionName,
       args,
     });
 
-    const result = await accountClient.writeContract(request);
+    const result = await walletClient.writeContract(request);
 
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: result,
@@ -37,6 +34,7 @@ export async function handleTransaction(
     //@DEV This is suitable for now, but may need to be updated in the future.
     return logs[0].args.id;
   } catch (error: any) {
+    console.log({ error });
     if (error instanceof BaseError) {
       if (error.details) {
         throw new Error(error.details);
