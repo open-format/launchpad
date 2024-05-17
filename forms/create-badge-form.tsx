@@ -31,7 +31,7 @@ import Image from "next/image";
 import { createBadge } from "@/app/_actions";
 import UnlockKeyFormField from "@/components/unlock-key-form-field";
 import { URLS } from "@/lib/constants";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const FormSchema = z.object({
@@ -54,6 +54,7 @@ export function CreateBadgeForm({
   });
   const params = useParams();
   const image = form.watch("image");
+  const router = useRouter();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
@@ -81,6 +82,8 @@ export function CreateBadgeForm({
         data.password,
         metadataURI
       );
+
+      router.refresh();
 
       toast.success(`Badge successfully created!`, {
         description: "You can reward it to you users.",
