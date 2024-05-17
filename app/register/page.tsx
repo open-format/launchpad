@@ -12,7 +12,7 @@ export default async function RegisterPage() {
   }
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12 h-screen">
         <div className="mx-auto grid w-[350px] gap-6 justify-center text-center">
           <div>
             <h1 className="text-3xl font-bold">Sign up with</h1>
