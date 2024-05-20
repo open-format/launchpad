@@ -1,23 +1,36 @@
 "use client";
 
-import useSupabaseClient from "@/lib/supabase/client";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { useRouter } from "next/navigation";
+import { fundAccount } from "../_actions";
 
 export const LoginForm = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const supabase = useSupabaseClient();
-  const { wallets } = useWallets();
-
-  const { ready, authenticated, login } = usePrivy();
+  const { ready, authenticated } = usePrivy();
   // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
 
+  const router = useRouter();
+
+  const { login } = useLogin({
+    onComplete: async (user, isNewUser) => {
+      if (isNewUser) {
+        await fundAccount(user.wallet?.address);
+      }
+      if (user) {
+        router.push("/home/apps");
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   return (
     <div>
-      <button disabled={disableLogin} onClick={login}>
-        Log in
-      </button>
+      <Button disabled={disableLogin} onClick={login}>
+        Get Started
+      </Button>
     </div>
   );
 };

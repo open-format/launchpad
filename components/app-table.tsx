@@ -9,7 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useQuery } from "@tanstack/react-query";
+import request, { gql } from "graphql-request";
 import Link from "next/link";
+import { useAccount } from "wagmi";
 import ChainName from "./chain-name";
 import { buttonVariants } from "./ui/button";
 import ValueBox from "./value-box";
@@ -24,9 +27,49 @@ interface AppTableProps {
   apps: App[];
 }
 
-export default function AppTable({ apps }: AppTableProps) {
-  if (!apps) {
-    return <div></div>;
+const GET_APPS = gql`
+  query getAppsByUser($user: String!) {
+    apps(
+      where: { owner_contains_nocase: $user }
+      orderBy: createdAt
+      orderDirection: desc
+    ) {
+      id
+      name
+      createdAt
+    }
+  }
+`;
+
+const fetcher = async (query, variables) => {
+  const data = await request<AppData>(
+    process.env.NEXT_PUBLIC_SUBGRAPH_URL!,
+    query,
+    { user: variables.user_address }
+  );
+
+  return data;
+};
+
+export const useGraphQLQuery = (queryKey, query, variables) => {
+  return useQuery({
+    queryKey,
+    queryFn: () => fetcher(query, variables),
+  });
+};
+
+export default function AppTable() {
+  const { address } = useAccount();
+  const { data, error, isLoading } = useGraphQLQuery(
+    ["getUsers"],
+    GET_APPS,
+    {
+      user_address: address,
+    }
+  );
+
+  if (isLoading) {
+    return <div>loading apps...</div>;
   }
   return (
     <Table>
@@ -40,8 +83,8 @@ export default function AppTable({ apps }: AppTableProps) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {apps &&
-          apps.map((app, i) => (
+        {data.apps &&
+          data.apps.map((app, i) => (
             <TableRow key={i}>
               <TableCell className="font-medium">
                 {app.name}

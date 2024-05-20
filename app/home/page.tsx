@@ -9,19 +9,19 @@ export default async function HomePage() {
     data: { user },
   } = await getUserSession();
 
-  if (!user) {
-    return redirect("/login");
-  }
+  // if (!user) {
+  //   return redirect("/login");
+  // }
 
-  const wallet = await supabase
-    .from("wallet")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+  // const wallet = await supabase
+  //   .from("wallet")
+  //   .select("*")
+  //   .eq("id", user.id)
+  //   .maybeSingle();
 
-  if (!wallet.data) {
-    return redirect("/onboarding/create-account");
-  }
+  // if (!wallet.data) {
+  //   return redirect("/onboarding/create-account");
+  // }
 
   redirect("/home/apps");
 }

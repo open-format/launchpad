@@ -1,9 +1,6 @@
 import { getAccountAddress, getUserApps } from "@/app/_actions";
 import AppTable from "@/components/app-table";
-import FlashCard from "@/components/flash-card";
 import GetStarted from "@/components/get-started";
-import { buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
 import CreateAppDialog from "./create/create-app";
 
 async function getData() {
@@ -33,17 +30,6 @@ export default async function AppsPage() {
 
   return (
     <div className="space-y-4">
-      {!account && (
-        <FlashCard
-          title="Action Required"
-          description="You need to create a web3 account before creating any dApp
-        or badges."
-        >
-          <Link className={buttonVariants()} href="/home/settings">
-            Settings
-          </Link>
-        </FlashCard>
-      )}
       <div className="flex justify-between flex-col space-y-2">
         <div className="flex justify-between">
           <h1>Apps</h1>

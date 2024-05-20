@@ -80,9 +80,7 @@ export default async function LoginPage() {
         <div className="mx-auto grid w-[350px] gap-6">
           <div>
             <h1 className="text-3xl font-bold">Welcome</h1>
-            <h2 className="text-sm font-medium text-muted-foreground">
-              Sign in to your account
-            </h2>
+            <h2 className="text-sm font-medium text-muted-foreground"></h2>
           </div>
           <LoginForm />
         </div>

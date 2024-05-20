@@ -9,8 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useWallets } from "@privy-io/react-auth";
 import { useState } from "react";
+import { useAccount, useConfig } from "wagmi";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -43,12 +43,15 @@ import { Arbitrum, Polygon } from "@thirdweb-dev/chain-icons";
 import { toast } from "sonner";
 
 import { appFactoryAbi } from "@/abis/AppFactory";
-import UnlockKeyFormField from "@/components/unlock-key-form-field";
+import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
 import { contractAddresses } from "@/lib/constants";
-import { handleTransaction } from "@/lib/transactions";
+import { getEventLog } from "@/lib/transactions";
+import {
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import { useRouter } from "next/navigation";
-import { createWalletClient, custom, stringToHex } from "viem";
-import { arbitrumSepolia } from "viem/chains";
+import { parseEther, stringToHex } from "viem";
 
 export default function CreateAppDialog({
   account,
@@ -65,9 +68,6 @@ export default function CreateAppDialog({
   const FormSchema = z.object({
     name: z.string().min(3).max(32),
     chain: z.string(),
-    password: z
-      .string()
-      .min(3, "password must contain at least 3 character(s)"),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -79,49 +79,103 @@ export default function CreateAppDialog({
     formState: { isSubmitting },
   } = form;
 
-  const { wallets } = useWallets();
+  const { address } = useAccount();
+  const config = useConfig();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
-    console.log({ wallets });
     try {
-      const wallet = wallets[0]; // Replace this with your desired wallet
-      await wallet.switchChain(arbitrumSepolia.id);
-
-      const provider = await wallet.getEthereumProvider();
-
-      const walletClient = createWalletClient({
-        chain: arbitrumSepolia,
-        transport: custom(provider),
+      toggle();
+      const startTx = toast.loading("Confirm to deploy your dApp", {
+        description:
+          "We're using a testnet and covering your gas costs.",
+        dismissible: false,
+        duration: 60000,
       });
 
-      console.log({ walletClient });
+      const hash = await writeContract(config, {
+        address: contractAddresses.APP_FACTORY,
+        abi: appFactoryAbi,
+        functionName: "create",
+        args: [stringToHex(data.name, { size: 32 }), address],
+      });
 
-      await handleTransaction(
-        walletClient,
-        contractAddresses.APP_FACTORY,
+      toast.dismiss(startTx);
+      toast.success("App successfully created!", {
+        description: "You can now create badges for this dApp.",
+        action: {
+          label: "View Transaction",
+          onClick: () =>
+            window.open(`https://sepolia.arbiscan.io/tx/${hash}`),
+        },
+        duration: 5000,
+      });
+
+      const transactionReceipt = await waitForTransactionReceipt(
+        config,
+        {
+          hash,
+        }
+      );
+
+      const appId = await getEventLog(
+        transactionReceipt,
         appFactoryAbi,
-        "create",
-        [stringToHex(data.name, { size: 32 }), wallet.address],
         "Created"
       );
 
-      toast.success("App successfully created!", {
+      const XpToken = toast.loading(
+        "Confirm to create your XP Token",
+        {
+          description:
+            "We're using a testnet and covering your gas costs.",
+          dismissible: false,
+          duration: 60000,
+        }
+      );
+
+      if (appId) {
+        await writeContract(config, {
+          address: appId,
+          abi: tokenFactoryAbi,
+          functionName: "createERC20",
+          args: [
+            data.name,
+            "XP",
+            18,
+            parseEther("0"),
+            stringToHex("Base", { size: 32 }),
+          ],
+        });
+      }
+
+      toast.dismiss(XpToken);
+
+      toast.success("XP Token successfully created!", {
         description: "You can now create badges for this dApp.",
+        action: {
+          label: "View Transaction",
+          onClick: () =>
+            window.open(`https://sepolia.arbiscan.io/tx/${hash}`),
+        },
         duration: 5000,
       });
+
+      router.push(`apps/${appId}`);
     } catch (e: any) {
+      toast.dismiss(startTx);
       console.log({ e });
       if (e.message.includes("password")) {
         setError("password", {
           type: "custom",
           message: e.message,
         });
-      } else if (e.message.includes("nameAlreadyUsed")) {
+      } else if (e.metaMessages[0].includes("nameAlreadyUsed")) {
+        console.log("here");
         setError("name", {
           type: "custom",
-          message: getErrorMessage(e.message),
+          message: getErrorMessage(e.metaMessages[0]),
         });
       } else {
         toast.error(getErrorMessage(e.message));
@@ -131,7 +185,7 @@ export default function CreateAppDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
-      <DialogTrigger className={buttonVariants()} disabled={!account}>
+      <DialogTrigger className={buttonVariants()}>
         Create dApp
       </DialogTrigger>
 
@@ -230,16 +284,20 @@ export default function CreateAppDialog({
                 </FormItem>
               )}
             />
-            <UnlockKeyFormField form={form} />
+
+            <p>
+              We're now going to deploy an App and XP Token on chain.
+              This is required you to confirm two transaction. We are
+              currently covering the gas costs.
+            </p>
+
             {isSubmitting ? (
               <Button disabled>
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                 Creating App...
               </Button>
             ) : (
-              <Button type="submit" disabled={Boolean(!account)}>
-                Create dApp
-              </Button>
+              <Button type="submit">Create dApp</Button>
             )}
           </form>
         </Form>

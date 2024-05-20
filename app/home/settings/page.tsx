@@ -1,4 +1,5 @@
-import { getAccountAddress } from "@/app/_actions";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,27 +16,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
-import { CreateAccountForm } from "./create-account-form";
+import { Label } from "@radix-ui/react-dropdown-menu";
+import { useAccount } from "wagmi";
 import { CreateAPIKey } from "./create-api-key";
 import DeleteAccountForm from "./delete-account-form";
-import RevealKey from "./reveal-key-form";
-
-async function getData() {
-  const res = await getAccountAddress();
-  return res.data;
-}
+import RevealKeyForm from "./reveal-key-form";
 
 export default async function SettingsPage() {
-  //@TODO correct handle errors
-  const data = await getData().catch((e) => e);
+  const { address } = useAccount();
 
   return (
     <div className="flex w-full flex-col space-y-5">
@@ -48,22 +37,20 @@ export default async function SettingsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {data && data.address ? (
+          {address && (
             <div>
               <div>
                 <Label>Public Key</Label>
                 <ValueBox
-                  value={data.address}
+                  value={address}
                   copyText="Public Key copied to clipboard."
                 />
               </div>
               <div>
                 <Label>Private Key</Label>
-                <RevealKey />
+                <RevealKeyForm />
               </div>
             </div>
-          ) : (
-            <CreateAccountForm />
           )}
         </CardContent>
       </Card>
@@ -76,23 +63,7 @@ export default async function SettingsPage() {
             time of creation.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {data.address ? (
-            <CreateAPIKey />
-          ) : (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button disabled>Generate New API Key</Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[300px]">
-                  You need to create a web3 account before you can
-                  generate an API Key.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </CardContent>
+        <CardContent>{address && <CreateAPIKey />}</CardContent>
       </Card>
       <Card>
         <CardHeader>

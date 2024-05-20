@@ -1,11 +1,6 @@
 "use client";
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -13,19 +8,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useSupabaseClient from "@/lib/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
-export default function Profile({ user }: { user: User }) {
+export default function Profile() {
   const { setTheme, theme } = useTheme();
-  const supabase = useSupabaseClient();
-  const router = useRouter();
+  const { ready, logout, user } = usePrivy();
 
-  function signOut() {
-    supabase.auth.signOut();
-    router.push("/login");
+  if (!ready) {
+    return <p>Loading...</p>;
   }
 
   function toggleTheme() {
@@ -35,19 +28,21 @@ export default function Profile({ user }: { user: User }) {
       setTheme("dark");
     }
   }
+
+  useEffect(() => {
+    console.log({ user });
+  }, [user]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="flex items-center space-x-2 m-3 justify-center">
           <Avatar>
-            <AvatarImage src={user.user_metadata["avatar_url"]} />
-            <AvatarFallback className="font-bold">
-              {user.user_metadata["name"]
-                ? user.user_metadata["name"].charAt(0)
-                : ""}
-            </AvatarFallback>
+            <AvatarImage src={user?.github?.username} />
+            <AvatarFallback className="font-bold">AK</AvatarFallback>
           </Avatar>
-          <p className="font-bold truncate">{user.email}</p>
+          <p className="font-bold truncate">
+            {user?.github?.username}
+          </p>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
@@ -57,7 +52,7 @@ export default function Profile({ user }: { user: User }) {
           Toggle Theme
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={signOut}>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
