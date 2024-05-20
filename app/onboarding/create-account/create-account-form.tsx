@@ -109,23 +109,27 @@ export function CreateAccountForm() {
             <CardHeader>
               <CardTitle>Create web3 account</CardTitle>
               <CardDescription>
-                You'll need a Web3 account to use OPENFORMAT. We can
-                set one up for you, but you'll have to secure it
-                yourself. OPENFORMAT doesn't store your password, so
-                it can't be recovered by us.
+                <ol className="list-disc">
+                  <li>You need a web3 account to use OPENFORMAT</li>
+                  <li>
+                    OPENFORMAT doesn't store your unlock your key
+                  </li>
+                  <li>
+                    Your unlock key cannot be recovered by us, so keep
+                    it safe
+                  </li>
+                  <li>Your unlock key secures your web3 account.</li>
+                  <li>
+                    You will need to use your unlock key to perform
+                    specific actions.
+                  </li>
+                </ol>
               </CardDescription>
             </CardHeader>
             <CardContent>
               <UnlockKeyFormField form={form} />
             </CardContent>
-            <CardFooter className="justify-between">
-              <Link
-                className={buttonVariants({ variant: "outline" })}
-                href={URLS.docs}
-                target="_blank"
-              >
-                Learn more
-              </Link>
+            <CardFooter className="justify-end">
               <Button type="submit">Create web3 account</Button>
             </CardFooter>
           </Card>
@@ -135,7 +139,7 @@ export function CreateAccountForm() {
         className="items-center flex justify-center hover:underline"
         href="/home/apps"
       >
-        Skip
+        Skip and create later
       </Link>
     </div>
   );
