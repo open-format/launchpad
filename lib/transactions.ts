@@ -1,13 +1,17 @@
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
 import { BaseError, TransactionReceipt, parseEventLogs } from "viem";
 import { publicClient } from "./viem/config";
 
 export async function handleTransaction(
   walletClient: any,
   address: `0x${string}`,
-  abi: typeof appFactoryAbi | typeof tokenFactoryAbi,
-  functionName: "create" | "createERC20",
+  abi:
+    | typeof appFactoryAbi
+    | typeof tokenFactoryAbi
+    | typeof badgeFactoryAbi,
+  functionName: "create" | "createERC20" | "createERC721",
   args: any,
   eventName: "Created"
 ) {

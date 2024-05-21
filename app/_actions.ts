@@ -275,29 +275,36 @@ export async function getApp(app: string) {
   }
 }
 
-export async function deleteAccount() {
+export async function validatePassword(password: string) {
   try {
-    const supabase = await createSupabaseServerClient(true);
+    const supabase = await createSupabaseServerClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      redirect("/login");
-    }
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user?.id)
+      .maybeSingle();
 
-    const { error } = await supabase.auth.admin.deleteUser(user.id);
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
 
-    if (error) {
+    return true;
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
       throw new Error(error.message);
     }
-
-    await supabase.auth.signOut();
-  } catch (error: any) {
-    throw new Error(error.message);
   }
-
-  redirect("/register");
 }
 
 export async function addUserToAudience() {
@@ -327,4 +334,37 @@ export async function addUserToAudience() {
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function deleteAccount() {
+  try {
+    const supabase = await createSupabaseServerClient(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(user.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+
+  redirect("/register");
 }
