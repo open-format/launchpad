@@ -1,17 +1,8 @@
 import { Badge } from "@/components/ui/badge";
-import getUserSession from "@/lib/getUserSession";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage() {
-  const {
-    data: { user },
-  } = await getUserSession();
-
-  if (user) {
-    return redirect("/home/apps");
-  }
   return (
     <div className="w-full">
       <div className="fixed flex items-center justify-center lg:justify-start w-full gap-2 font-semibold p-4">
@@ -33,9 +24,9 @@ export default async function LoginPage() {
           </h3>
           <LoginForm />
           <div className="py-6 text-left">
-            {/* <p className="font-semibold">
+            <p className="font-semibold">
               What you can do with the launchpad:
-            </p> */}
+            </p>
             <ol className="space-y-4 py-4 list-disc mx-6">
               <li>
                 <div>

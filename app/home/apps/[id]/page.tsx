@@ -71,7 +71,7 @@ export default async function ViewAppPage({
                   copyText="App ID copied to clipboard."
                 />
               )}
-              {app.xpToken.id && (
+              {app?.xpToken?.id && (
                 <ValueBox
                   label="XP Token Address"
                   description="This the on-chain token address for the XP token associated with this dApp. This value is required for the SDK only."

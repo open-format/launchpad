@@ -10,12 +10,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useConfig } from "wagmi";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { createApp } from "@/app/_actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,8 +42,17 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { Arbitrum, Polygon } from "@thirdweb-dev/chain-icons";
 import { toast } from "sonner";
 
-import UnlockKeyFormField from "@/components/unlock-key-form-field";
+import { appFactoryAbi } from "@/abis/AppFactory";
+import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { contractAddresses } from "@/lib/constants";
+import { getEventLog } from "@/lib/transactions";
+import { usePrivy } from "@privy-io/react-auth";
+import {
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import { useRouter } from "next/navigation";
+import { parseEther, stringToHex } from "viem";
 
 export default function CreateAppDialog({
   account,
@@ -60,9 +69,6 @@ export default function CreateAppDialog({
   const FormSchema = z.object({
     name: z.string().min(3).max(32),
     chain: z.string(),
-    password: z
-      .string()
-      .min(3, "password must contain at least 3 character(s)"),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -70,31 +76,74 @@ export default function CreateAppDialog({
   });
 
   const {
-    reset,
     setError,
     formState: { isSubmitting },
   } = form;
+
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
+  const config = useConfig();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
     try {
-      const res = await createApp(data.name, data.password);
+      const hash = await writeContract(config, {
+        address: contractAddresses.APP_FACTORY,
+        abi: appFactoryAbi,
+        functionName: "create",
+        args: [stringToHex(data.name, { size: 32 }), address],
+      });
+
+      const transactionReceipt = await waitForTransactionReceipt(
+        config,
+        {
+          hash,
+        }
+      );
+
+      const appId = await getEventLog(
+        transactionReceipt,
+        appFactoryAbi,
+        "Created"
+      );
+
+      if (appId) {
+        await writeContract(config, {
+          address: appId,
+          abi: tokenFactoryAbi,
+          functionName: "createERC20",
+          args: [
+            data.name,
+            "XP",
+            18,
+            parseEther("0"),
+            stringToHex("Base", { size: 32 }),
+          ],
+        });
+      }
+
       toast.success("App successfully created!", {
         description: "You can now create badges for this dApp.",
+        action: {
+          label: "View Transaction",
+          onClick: () =>
+            window.open(`https://sepolia.arbiscan.io/tx/${hash}`),
+        },
         duration: 5000,
       });
-      router.push(`apps/${res.appId}`);
+
+      router.push(`apps/${appId}`);
     } catch (e: any) {
       if (e.message.includes("password")) {
         setError("password", {
           type: "custom",
           message: e.message,
         });
-      } else if (e.message.includes("nameAlreadyUsed")) {
+      } else if (e.metaMessages[0].includes("nameAlreadyUsed")) {
         setError("name", {
           type: "custom",
-          message: getErrorMessage(e.message),
+          message: getErrorMessage(e.metaMessages[0]),
         });
       } else {
         toast.error(getErrorMessage(e.message));
@@ -104,7 +153,7 @@ export default function CreateAppDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
-      <DialogTrigger className={buttonVariants()} disabled={!account}>
+      <DialogTrigger className={buttonVariants()}>
         Create dApp
       </DialogTrigger>
 
@@ -203,16 +252,14 @@ export default function CreateAppDialog({
                 </FormItem>
               )}
             />
-            <UnlockKeyFormField form={form} />
+
             {isSubmitting ? (
               <Button disabled>
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                 Creating App...
               </Button>
             ) : (
-              <Button type="submit" disabled={Boolean(!account)}>
-                Create dApp
-              </Button>
+              <Button type="submit">Create dApp</Button>
             )}
           </form>
         </Form>
