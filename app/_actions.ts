@@ -2,6 +2,7 @@
 
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
+import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
 import { trackEvent } from "@/lib/analytics";
 import { contractAddresses } from "@/lib/constants";
 import { encrypt } from "@/lib/encryption";
@@ -376,29 +377,88 @@ export async function getApp(app: string) {
   }
 }
 
-export async function deleteAccount() {
+export async function validatePassword(password: string) {
   try {
-    const supabase = await createSupabaseServerClient(true);
+    const supabase = await createSupabaseServerClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      redirect("/login");
-    }
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user?.id)
+      .maybeSingle();
 
-    const { error } = await supabase.auth.admin.deleteUser(user.id);
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
 
-    if (error) {
+    return true;
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
       throw new Error(error.message);
     }
-
-    await supabase.auth.signOut();
-  } catch (error: any) {
-    throw new Error(error.message);
   }
+}
 
-  redirect("/register");
+export async function createBadge(
+  appId: string,
+  name: string,
+  password: string
+) {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user?.id)
+      .maybeSingle();
+
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
+
+    // @TODO Use ERC721Badge when ready.
+    const badgeId = await handleTransaction(
+      decrypted.privateKey,
+      appId as `0x${string}`,
+      badgeFactoryAbi,
+      "createERC721",
+      [
+        name,
+        "BADGE",
+        decrypted.address,
+        1000,
+        stringToHex("Base", { size: 32 }),
+      ],
+      "Created"
+    );
+
+    return badgeId;
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
+  }
 }
 
 export async function addUserToAudience() {
@@ -428,4 +488,37 @@ export async function addUserToAudience() {
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function deleteAccount() {
+  try {
+    const supabase = await createSupabaseServerClient(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(user.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+
+  redirect("/register");
 }
