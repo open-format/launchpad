@@ -32,7 +32,7 @@ export const LoginForm = () => {
         size="lg"
         className={cn(
           { "opacity-0": disableLogin },
-          "bg-[#FFF404] text-black hover:bg-[#FFF863] shadow font-bold text-xl"
+          "bg-[#FFF404] text-black hover:bg-[#ffe504] hover:shadow font-bold text-xl"
         )}
         onClick={login}
       >

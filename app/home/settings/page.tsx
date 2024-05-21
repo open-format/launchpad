@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,19 +19,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import ValueBox from "@/components/value-box";
 import { usePrivy } from "@privy-io/react-auth";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { CreateAPIKey } from "./create-api-key";
-import DeleteAccountForm from "./delete-account-form";
 import RevealKeyForm from "./reveal-key-form";
 
 export default function SettingsPage() {
@@ -78,22 +80,28 @@ export default function SettingsPage() {
           <CardTitle>Account</CardTitle>
         </CardHeader>
         <CardContent>
-          <Dialog>
-            <DialogTrigger>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
               <Button variant="destructive">Delete Account</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently
-                  delete your account and remove your data from our
-                  servers.
-                </DialogDescription>
-              </DialogHeader>
-              <DeleteAccountForm />
-            </DialogContent>
-          </Dialog>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center space-x-2">
+                  <p>Delete Account</p>
+                  <Badge>Coming soon</Badge>
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  If you wish to delete your account, please reach out
+                  to us through our support channels. We're working on
+                  implementing an automatic deletion feature. Thank
+                  you for your patience.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction>Continue</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>
