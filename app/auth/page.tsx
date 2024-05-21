@@ -24,9 +24,9 @@ export default async function LoginPage() {
           </h3>
           <LoginForm />
           <div className="py-6 text-left">
-            {/* <p className="font-semibold">
+            <p className="font-semibold">
               What you can do with the launchpad:
-            </p> */}
+            </p>
             <ol className="space-y-4 py-4 list-disc mx-6">
               <li>
                 <div>

@@ -25,7 +25,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { ready, authenticated, login, logout, user } = usePrivy();
+  const { ready, authenticated } = usePrivy();
   const router = useRouter();
 
   if (!ready) {
@@ -33,7 +33,7 @@ export default function RootLayout({
   }
 
   if (ready && !authenticated) {
-    router.push("/login");
+    router.push("/auth");
   }
 
   if (ready && authenticated) {
