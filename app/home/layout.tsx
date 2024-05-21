@@ -1,4 +1,4 @@
-import { Book, Cog, Home, Menu } from "lucide-react";
+import { Book, Home, Menu } from "lucide-react";
 import Link from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -58,15 +58,7 @@ export default async function RootLayout({
                 <Home className="h-4 w-4" />
                 dApps
               </Link>
-              <Link
-                href="/home/settings"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Cog className="h-4 w-4" />
-                Settings
-              </Link>
             </nav>
-            <Profile user={user} />
           </div>
         </div>
       </div>
@@ -90,6 +82,7 @@ export default async function RootLayout({
             <DiscordLogoIcon className="mr-2 h-5 w-5" />
             Support
           </Link>
+          <Profile user={user} />
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -125,15 +118,6 @@ export default async function RootLayout({
                   >
                     <Home className="h-5 w-5" />
                     dApps
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
-                    href="/home/settings"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Cog className="h-5 w-5" />
-                    Settings
                   </Link>
                 </SheetClose>
               </nav>

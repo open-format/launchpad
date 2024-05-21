@@ -9,13 +9,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useSupabaseClient from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Profile({ user }: { user: User }) {
@@ -47,16 +47,29 @@ export default function Profile({ user }: { user: User }) {
                 : ""}
             </AvatarFallback>
           </Avatar>
-          <p className="font-bold truncate">{user.email}</p>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <div className="flex flex-col space-y-2 items-center m-3 justify-center">
+          <Avatar>
+            <AvatarImage src={user.user_metadata["avatar_url"]} />
+            <AvatarFallback className="font-bold">
+              {user.user_metadata["name"]
+                ? user.user_metadata["name"].charAt(0)
+                : ""}
+            </AvatarFallback>
+          </Avatar>
+          <p className="font-bold truncate text-xs">{user.email}</p>
+        </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/home/settings">Settings</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={toggleTheme}>
           Toggle Theme
         </DropdownMenuItem>
-
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOut}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
