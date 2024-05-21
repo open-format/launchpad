@@ -40,8 +40,8 @@ export default function ValueBox({
   }
 
   return (
-    <div className="flex space-x-2 flex-1 w-full">
-      <div className="w-full space-y-1">
+    <div className="flex space-x-2">
+      <div className={cn({ "flex-1": !basic }, "space-y-1")}>
         {label && <h3>{label}</h3>}
         {description && (
           <p className="text-sm text-muted-foreground">
@@ -61,7 +61,6 @@ export default function ValueBox({
           {value && <p className="truncate">{value}</p>}
         </div>
       </div>
-
       {copyText && (
         <Button
           className={cn(

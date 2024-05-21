@@ -1,5 +1,5 @@
 import { getApp } from "@/app/_actions";
-import BadgeGrid from "@/components/badge-grid";
+import BadgeTable from "@/components/badge-table";
 import ChainName from "@/components/chain-name";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -93,7 +93,7 @@ export default async function ViewAppPage({
           </CardHeader>
         )}
         <CardContent>
-          <BadgeGrid badges={app?.badges} />
+          <BadgeTable badges={app?.badges} />
         </CardContent>
       </Card>
     </div>

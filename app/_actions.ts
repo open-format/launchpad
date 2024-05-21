@@ -360,6 +360,7 @@ export async function getApp(app: string) {
           badges(orderBy: createdAt, orderDirection: desc) {
             id
             name
+            createdAt
           }
         }
       }

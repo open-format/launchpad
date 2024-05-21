@@ -1,5 +1,4 @@
 import ChainName from "@/components/chain-name";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,16 +66,13 @@ export default async function Loading() {
             <CreateBadgeDialog />
           </div>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {new Array(4).fill("").map((_, i) => (
-            <AspectRatio
-              key={i}
-              ratio={1 / 1.2}
-              className="bg-muted rounded-md animate-pulse"
-            >
-              <Skeleton />
-            </AspectRatio>
-          ))}
+        <CardContent className="space-y-4">
+          <ValueBox
+            label=""
+            value=""
+            isLoading={true}
+            copyText="Badge ID copied to clipboard."
+          />
         </CardContent>
       </Card>
     </div>

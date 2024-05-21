@@ -32,6 +32,7 @@ type Badge = {
   id: string;
   name: string;
   metadataURI: string;
+  createdAt: string;
 };
 
 type App = {
