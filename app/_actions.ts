@@ -131,26 +131,6 @@ export async function generateChallenge(address: string) {
       .then((response) => response.json())
       .catch((err) => console.error(err));
 
-    // const signature = await accountClient.signMessage({
-    //   message: challenge.challenge,
-    // });
-
-    // const verify = await fetch(
-    //   "https://api.openformat.tech/key/verify",
-    //   {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({
-    //       public_address: account.address,
-    //       signature: signature,
-    //     }),
-    //   }
-    // )
-    //   .then((response) => response.json())
-    //   .catch((err) => console.error(err));
-
-    // await trackEvent({ event_name: "Generate API Key" });
-
     return challenge;
   } catch (error: any) {
     if (
