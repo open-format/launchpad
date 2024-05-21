@@ -14,8 +14,8 @@ export const LoginForm = () => {
 
   const { login } = useLogin({
     onComplete: async (user, isNewUser) => {
-      if (isNewUser) {
-        await fundAccount(user.wallet?.address);
+      if (isNewUser && user?.wallet?.address) {
+        await fundAccount(user.wallet.address);
       }
       if (user) {
         router.push("/home/apps");
