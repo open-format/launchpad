@@ -23,7 +23,7 @@ import { CreateAPIKey } from "./create-api-key";
 import DeleteAccountForm from "./delete-account-form";
 import RevealKeyForm from "./reveal-key-form";
 
-export default async function SettingsPage() {
+export default function SettingsPage() {
   const { user } = usePrivy();
   const address = user?.wallet?.address;
 
@@ -66,8 +66,9 @@ export default async function SettingsPage() {
           <CardTitle>API Keys</CardTitle>
           <CardDescription>
             Securely create a new API key linked to your web3 account.
-            For your security, API keys are only displayed once at the
-            time of creation.
+            Please be careful, as creating a new API key will override
+            any existing keys, disabling them. For your security, we
+            only display your API key once at the time of creation.
           </CardDescription>
         </CardHeader>
         <CardContent>{address && <CreateAPIKey />}</CardContent>

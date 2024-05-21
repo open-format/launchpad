@@ -54,11 +54,7 @@ import {
 import { useRouter } from "next/navigation";
 import { parseEther, stringToHex } from "viem";
 
-export default function CreateAppDialog({
-  account,
-}: {
-  account: any;
-}) {
+export default function CreateAppDialog() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
 
