@@ -12,7 +12,7 @@ export default function PrivyProvider({
   const { theme } = useTheme();
   return (
     <Privy
-      appId="clwar2tbz0achoadwir4m7z5c"
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       config={{
         // Customize Privy's appearance in your app
         appearance: {
