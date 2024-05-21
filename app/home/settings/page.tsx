@@ -44,7 +44,8 @@ export default async function SettingsPage() {
         <CardHeader>
           <CardTitle>Web3 Account</CardTitle>
           <CardDescription>
-            Here is your web3 account. It's used to do transactions.
+            Your web3 account is responsible for sending and receiving
+            onchain rewards.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -55,10 +56,15 @@ export default async function SettingsPage() {
                 <ValueBox
                   value={data.address}
                   copyText="Public Key copied to clipboard."
+                  description="Your public key is used to receive rewards"
                 />
               </div>
               <div>
                 <Label>Private Key</Label>
+                <p className="text-sm text-muted-foreground py-1">
+                  Your private key is used to authorise the sending of
+                  rewards from your dApps.
+                </p>
                 <RevealKey />
               </div>
             </div>

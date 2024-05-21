@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import useSupabaseClient from "@/lib/supabase/client";
 import { GitHubLogoIcon, ReloadIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
 import { useState } from "react";
 
 export const LoginForm = () => {
@@ -21,7 +20,7 @@ export const LoginForm = () => {
   }
 
   return (
-    <div>
+    <div className="py-4">
       <Button disabled={isLoading} onClick={loginWithGitHub}>
         {isLoading ? (
           <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -30,17 +29,6 @@ export const LoginForm = () => {
         )}
         Continue With Github
       </Button>
-      <div className="my-8 self-center text-sm text-center">
-        <span className="text-foreground-light">
-          Don't have an account?
-        </span>{" "}
-        <Link
-          className="underline text-foreground hover:text-foreground-light transition"
-          href="/register"
-        >
-          Sign Up Now
-        </Link>
-      </div>
     </div>
   );
 };

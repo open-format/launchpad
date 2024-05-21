@@ -46,7 +46,7 @@ export default async function AppsPage() {
       )}
       <div className="flex justify-between flex-col space-y-2">
         <div className="flex justify-between">
-          <h1>Apps</h1>
+          <h1>dApps</h1>
           <CreateAppDialog account={account} />
         </div>
         <GetStarted />

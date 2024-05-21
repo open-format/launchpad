@@ -15,7 +15,6 @@ import {
 import useSupabaseClient from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useTheme } from "next-themes";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Profile({ user }: { user: User }) {
@@ -61,10 +60,7 @@ export default function Profile({ user }: { user: User }) {
           </Avatar>
           <p className="font-bold truncate text-xs">{user.email}</p>
         </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/home/settings">Settings</Link>
-        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={toggleTheme}>
           Toggle Theme

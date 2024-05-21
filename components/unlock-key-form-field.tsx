@@ -20,16 +20,19 @@ export default function UnlockKeyFormField({
       name="password"
       render={({ field }) => (
         <FormItem className="flex-1">
-          <FormLabel>Unlock Key</FormLabel>
+          <FormLabel>
+            Create Unlock Key to secure your web3 account
+          </FormLabel>
           <FormControl>
             <Input
+              id="password"
               autoComplete="password"
               {...field}
               type="password"
             />
           </FormControl>
           <FormDescription>
-            Please enter your unlock key.
+            Please create a strong key phrase.
           </FormDescription>
           <FormMessage />
         </FormItem>

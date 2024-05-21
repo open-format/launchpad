@@ -1,4 +1,4 @@
-import { Book, Home, Menu } from "lucide-react";
+import { Book, Home, Menu, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { URLS } from "@/lib/constants";
 import getUserSession from "@/lib/getUserSession";
 import { DiscordLogoIcon } from "@radix-ui/react-icons";
 
+import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
@@ -47,16 +48,31 @@ export default async function RootLayout({
                 alt="hi"
               />
               <span>OPENFORMAT</span>
+              <Badge>BETA</Badge>
             </Link>
           </div>
           <div className="justify-between flex flex-col h-screen">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4 my-12 space-y-2 ">
+            <nav className="grid items-start px-2 text-sm font-medium lg:px-4 my-12 space-y-2">
               <Link
                 href="/home/apps"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
               >
                 <Home className="h-4 w-4" />
                 dApps
+              </Link>
+              <div
+                aria-disabled
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary opacity-50"
+              >
+                <Home className="h-4 w-4" />
+                Missions <Badge>coming soon</Badge>
+              </div>
+              <Link
+                href="/home/settings"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <SettingsIcon className="h-4 w-4" />
+                Settings
               </Link>
             </nav>
           </div>
@@ -110,15 +126,34 @@ export default async function RootLayout({
                     alt="hi"
                   />
                   <span>OPENFORMAT</span>
+                  <Badge>BETA</Badge>
                 </Link>
                 <SheetClose asChild>
                   <Link
                     href="/home/apps"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                   >
-                    <Home className="h-5 w-5" />
+                    <Home className="h-4 w-4" />
                     dApps
                   </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link
+                    href="/home/settings"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  >
+                    <SettingsIcon className="h-4 w-4" />
+                    Settings
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <div
+                    aria-disabled
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary opacity-50"
+                  >
+                    <Home className="h-4 w-4" />
+                    Missions <Badge>coming soon</Badge>
+                  </div>
                 </SheetClose>
               </nav>
             </SheetContent>
