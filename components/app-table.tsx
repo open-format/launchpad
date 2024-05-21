@@ -9,10 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@tanstack/react-query";
 import request, { gql } from "graphql-request";
 import Link from "next/link";
-import { useAccount } from "wagmi";
 import ChainName from "./chain-name";
 import { buttonVariants } from "./ui/button";
 import ValueBox from "./value-box";
@@ -59,7 +59,8 @@ export const useGraphQLQuery = (queryKey, query, variables) => {
 };
 
 export default function AppTable() {
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const { data, error, isLoading } = useGraphQLQuery(
     ["getUsers"],
     GET_APPS,

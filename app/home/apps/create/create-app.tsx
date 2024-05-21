@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { useAccount, useConfig } from "wagmi";
+import { useConfig } from "wagmi";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -46,6 +46,7 @@ import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
 import { contractAddresses } from "@/lib/constants";
 import { getEventLog } from "@/lib/transactions";
+import { usePrivy } from "@privy-io/react-auth";
 import {
   waitForTransactionReceipt,
   writeContract,
@@ -79,7 +80,8 @@ export default function CreateAppDialog({
     formState: { isSubmitting },
   } = form;
 
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const config = useConfig();
 
   async function handleFormSubmission(

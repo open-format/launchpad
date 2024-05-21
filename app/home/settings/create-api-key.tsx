@@ -16,13 +16,12 @@ import {
 import { Form } from "@/components/ui/form";
 import ValueBox from "@/components/value-box";
 import { getErrorMessage } from "@/lib/errors";
-import { useAccountStore } from "@/stores";
 import { usePrivy } from "@privy-io/react-auth";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { signMessage as signMessageWallet } from "@wagmi/core";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useAccount, useConfig } from "wagmi";
+import { useConfig } from "wagmi";
 
 const FormSchema = z.object({
   password: z.any(),
@@ -31,13 +30,12 @@ const FormSchema = z.object({
 export function CreateAPIKey() {
   const [apiKey, setAPIKey] = useState<string | null>();
   const [isOpen, setIsOpen] = useState<boolean>();
-  const { address } = useAccount();
   const { signMessage, user } = usePrivy();
+  const address = user?.wallet?.address;
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
-  const { setEncryptedAccountKey } = useAccountStore();
 
   const {
     setError,

@@ -17,14 +17,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ValueBox from "@/components/value-box";
+import { usePrivy } from "@privy-io/react-auth";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { useAccount } from "wagmi";
 import { CreateAPIKey } from "./create-api-key";
 import DeleteAccountForm from "./delete-account-form";
 import RevealKeyForm from "./reveal-key-form";
 
 export default async function SettingsPage() {
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
 
   return (
     <div className="flex w-full flex-col space-y-5">

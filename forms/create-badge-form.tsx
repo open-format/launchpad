@@ -17,11 +17,11 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { URLS, contractAddresses } from "@/lib/constants";
+import { usePrivy } from "@privy-io/react-auth";
 import { writeContract } from "@wagmi/core";
-import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { stringToHex } from "viem";
-import { useAccount, useConfig } from "wagmi";
+import { useConfig } from "wagmi";
 
 const FormSchema = z.object({
   name: z.string().min(3).max(32),
@@ -38,8 +38,8 @@ export function CreateBadgeForm({
     resolver: zodResolver(FormSchema),
   });
   const config = useConfig();
-  const { address } = useAccount();
-  const params = useParams();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
