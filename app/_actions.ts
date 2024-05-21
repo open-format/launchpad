@@ -255,9 +255,10 @@ export async function getApp(app: string) {
           xpToken {
             id
           }
-          badges {
+          badges(orderBy: createdAt, orderDirection: desc) {
             id
             name
+            createdAt
           }
         }
       }

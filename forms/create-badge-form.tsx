@@ -19,6 +19,7 @@ import { appFactoryAbi } from "@/abis/AppFactory";
 import { URLS, contractAddresses } from "@/lib/constants";
 import { usePrivy } from "@privy-io/react-auth";
 import { writeContract } from "@wagmi/core";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { stringToHex } from "viem";
 import { useConfig } from "wagmi";
@@ -40,6 +41,7 @@ export function CreateBadgeForm({
   const config = useConfig();
   const { user } = usePrivy();
   const address = user?.wallet?.address;
+  const router = useRouter();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
@@ -51,6 +53,8 @@ export function CreateBadgeForm({
         functionName: "create",
         args: [stringToHex(data.name, { size: 32 }), address],
       });
+
+      router.refresh();
 
       toast.success(`Badge successfully created!`, {
         description: "You can reward it to you users.",
