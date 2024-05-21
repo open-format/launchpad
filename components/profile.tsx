@@ -11,7 +11,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import WalletAvatar from "./gradient-avatar";
 
 export default function Profile() {
   const { setTheme, theme } = useTheme();
@@ -36,13 +36,12 @@ export default function Profile() {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="flex items-center space-x-2 m-3 justify-center">
-          <Avatar>
-            <AvatarImage src={user?.github?.username} />
-            <AvatarFallback className="font-bold">AK</AvatarFallback>
-          </Avatar>
-          <p className="font-bold truncate">
-            {user?.github?.username}
-          </p>
+          <WalletAvatar seed={user?.wallet?.address} size={32} />
+          {user?.github?.name && (
+            <p className="font-bold truncate max-w-[100px]">
+              {user?.github?.username}
+            </p>
+          )}
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
