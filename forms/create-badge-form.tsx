@@ -59,9 +59,7 @@ export function CreateBadgeForm({
           1000,
           stringToHex("Base", { size: 32 }),
         ],
-      });
-
-      router.refresh();
+      }).then(() => setTimeout(() => router.refresh(), 1000));
 
       toast.success(`Badge successfully created!`, {
         description:
