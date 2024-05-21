@@ -16,6 +16,7 @@ export default function PrivyProvider({
       config={{
         // Customize Privy's appearance in your app
         appearance: {
+          //@ts-ignore
           theme: theme,
           accentColor: "#FFF400",
           logo: "https://avatars.githubusercontent.com/u/121942809?s=200&v=4",

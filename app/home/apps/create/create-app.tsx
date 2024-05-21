@@ -88,7 +88,10 @@ export default function CreateAppDialog() {
         address: contractAddresses.APP_FACTORY,
         abi: appFactoryAbi,
         functionName: "create",
-        args: [stringToHex(data.name, { size: 32 }), address],
+        args: [
+          stringToHex(data.name, { size: 32 }),
+          address as Web3AccountAddress,
+        ],
       });
 
       const transactionReceipt = await waitForTransactionReceipt(
@@ -131,12 +134,7 @@ export default function CreateAppDialog() {
 
       router.push(`apps/${appId}`);
     } catch (e: any) {
-      if (e.message.includes("password")) {
-        setError("password", {
-          type: "custom",
-          message: e.message,
-        });
-      } else if (e.metaMessages[0].includes("nameAlreadyUsed")) {
+      if (e.metaMessages[0].includes("nameAlreadyUsed")) {
         setError("name", {
           type: "custom",
           message: getErrorMessage(e.metaMessages[0]),

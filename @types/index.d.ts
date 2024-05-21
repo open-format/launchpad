@@ -48,3 +48,5 @@ type App = {
 interface AppData {
   apps: App[];
 }
+
+type Web3AccountAddress = `0x${string}`;

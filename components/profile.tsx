@@ -10,7 +10,6 @@ import {
 import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useEffect } from "react";
 import WalletAvatar from "./gradient-avatar";
 
 export default function Profile() {
@@ -29,9 +28,6 @@ export default function Profile() {
     }
   }
 
-  useEffect(() => {
-    console.log({ user });
-  }, [user]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>

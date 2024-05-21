@@ -1,10 +1,10 @@
 interface GradientAvatarProps {
-  seed: string;
+  seed?: string;
   size?: number;
 }
 
 export default function GradientAvatar({
-  seed,
+  seed = "seed",
   size = 64,
 }: GradientAvatarProps) {
   const generateHash = (str: string): number => {

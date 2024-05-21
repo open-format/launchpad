@@ -47,6 +47,9 @@ export function CreateAPIKey() {
     data: z.infer<typeof FormSchema>
   ) {
     try {
+      if (!address) {
+        throw new Error("Web3 account not found.");
+      }
       const challenge = await generateChallenge(address);
 
       const uiConfig = {
@@ -118,10 +121,12 @@ export function CreateAPIKey() {
             </DialogDescription>
           </DialogHeader>
           <div>
-            <ValueBox
-              value={apiKey}
-              copyText="API Key copied to clipboard."
-            />
+            {apiKey && (
+              <ValueBox
+                value={apiKey}
+                copyText="API Key copied to clipboard."
+              />
+            )}
           </div>
         </DialogContent>
       </Dialog>

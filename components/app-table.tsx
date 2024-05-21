@@ -38,7 +38,10 @@ const GET_APPS = gql`
   }
 `;
 
-const fetcher = async (query, variables) => {
+const fetcher = async (
+  query: any,
+  variables: Record<string, string>
+) => {
   const data = await request<AppData>(
     process.env.NEXT_PUBLIC_SUBGRAPH_URL!,
     query,
@@ -48,7 +51,11 @@ const fetcher = async (query, variables) => {
   return data;
 };
 
-export const useGraphQLQuery = (queryKey, query, variables) => {
+export const useGraphQLQuery = (
+  queryKey: string[],
+  query: any,
+  variables: Record<string, string>
+) => {
   return useQuery({
     queryKey,
     queryFn: () => fetcher(query, variables),
@@ -58,6 +65,11 @@ export const useGraphQLQuery = (queryKey, query, variables) => {
 export default function AppTable() {
   const { user } = usePrivy();
   const address = user?.wallet?.address;
+
+  if (!address) {
+    return null;
+  }
+
   const { data } = useGraphQLQuery(["getUsers"], GET_APPS, {
     user_address: address,
   });
