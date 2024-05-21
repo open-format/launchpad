@@ -83,8 +83,8 @@ export default function AppTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.apps &&
-          data.apps.map((app, i) => (
+        {data?.apps &&
+          data?.apps.map((app, i) => (
             <TableRow key={i}>
               <TableCell className="font-medium">
                 {app.name}

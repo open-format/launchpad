@@ -1,15 +1,6 @@
-import getUserSession from "@/lib/getUserSession";
-import { redirect } from "next/navigation";
 import { RegisterForm } from "./register-form";
 
 export default async function RegisterPage() {
-  const {
-    data: { user },
-  } = await getUserSession();
-
-  if (user) {
-    return redirect("/home/apps");
-  }
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
