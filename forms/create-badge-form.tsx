@@ -15,11 +15,11 @@ import { Input } from "@/components/ui/input";
 import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-import { appFactoryAbi } from "@/abis/AppFactory";
-import { URLS, contractAddresses } from "@/lib/constants";
+import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
+import { URLS } from "@/lib/constants";
 import { usePrivy } from "@privy-io/react-auth";
 import { writeContract } from "@wagmi/core";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { stringToHex } from "viem";
 import { useConfig } from "wagmi";
@@ -42,16 +42,23 @@ export function CreateBadgeForm({
   const { user } = usePrivy();
   const address = user?.wallet?.address;
   const router = useRouter();
+  const params = useParams();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
     try {
       await writeContract(config, {
-        address: contractAddresses.APP_FACTORY,
-        abi: appFactoryAbi,
-        functionName: "create",
-        args: [stringToHex(data.name, { size: 32 }), address],
+        address: params.id as `0x${string}`,
+        abi: badgeFactoryAbi,
+        functionName: "createERC721",
+        args: [
+          data.name,
+          "BADGE",
+          address as `0x${string}`,
+          1000,
+          stringToHex("Base", { size: 32 }),
+        ],
       });
 
       router.refresh();

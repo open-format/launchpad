@@ -40,7 +40,7 @@ export default function ValueBox({
   }
 
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-2 flex-1">
       <div className={cn({ "flex-1": !basic }, "space-y-1")}>
         {label && <h3>{label}</h3>}
         {description && (
