@@ -17,7 +17,7 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 
 import { createBadge } from "@/app/_actions";
 import { URLS } from "@/lib/constants";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const FormSchema = z.object({
@@ -35,12 +35,15 @@ export function CreateBadgeForm({
     resolver: zodResolver(FormSchema),
   });
   const params = useParams();
+  const router = useRouter();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
     try {
       await createBadge(params.id as string, data.name, "hello");
+
+      router.refresh();
 
       toast.success(`Badge successfully created!`, {
         description: "You can reward it to you users.",

@@ -65,7 +65,7 @@ export async function createWeb3Account(
       },
       body: JSON.stringify({
         user_address: wallet.address,
-        amount: process.env.ACCOUNT_BALANCE_AMOUNT ?? 0.2,
+        amount: process.env.ACCOUNT_BALANCE_AMOUNT ?? "0.2",
       }),
     })
       .then((response) => response.json())
@@ -357,9 +357,10 @@ export async function getApp(app: string) {
           xpToken {
             id
           }
-          badges {
+          badges(orderBy: createdAt, orderDirection: desc) {
             id
             name
+            createdAt
           }
         }
       }
