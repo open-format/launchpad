@@ -101,10 +101,10 @@ export function CreateAPIKey() {
           {isSubmitting ? (
             <Button disabled>
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-              Creating API Key...
+              Creating New API Key...
             </Button>
           ) : (
-            <Button type="submit">Create API Key</Button>
+            <Button type="submit">Create New API Key</Button>
           )}
         </form>
       </Form>

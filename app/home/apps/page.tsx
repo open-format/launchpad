@@ -1,4 +1,4 @@
-import { getAccountAddress, getUserApps } from "@/app/_actions";
+import { getUserApps } from "@/app/_actions";
 import AppTable from "@/components/app-table";
 import GetStarted from "@/components/get-started";
 import CreateAppDialog from "./create/create-app";
@@ -13,27 +13,16 @@ async function getData() {
   }
 }
 
-async function getAccount() {
-  try {
-    const res = await getAccountAddress();
-    return res;
-  } catch (e) {
-    //@TODO Improve error handling
-    console.log(e);
-  }
-}
-
 export default async function AppsPage() {
   // @TODO Improve error handling
   const apps = await getData();
-  const account = await getAccount();
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between flex-col space-y-2">
+      <div className="flex justify-between flex-col space-y-4">
         <div className="flex justify-between">
           <h1>dApps</h1>
-          <CreateAppDialog account={account} />
+          <CreateAppDialog />
         </div>
         <GetStarted />
       </div>

@@ -15,6 +15,7 @@ import request, { gql } from "graphql-request";
 import Link from "next/link";
 import ChainName from "./chain-name";
 import { buttonVariants } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 import ValueBox from "./value-box";
 
 type App = {
@@ -22,10 +23,6 @@ type App = {
   name: string;
   createdAt: string;
 };
-
-interface AppTableProps {
-  apps: App[];
-}
 
 const GET_APPS = gql`
   query getAppsByUser($user: String!) {
@@ -61,17 +58,10 @@ export const useGraphQLQuery = (queryKey, query, variables) => {
 export default function AppTable() {
   const { user } = usePrivy();
   const address = user?.wallet?.address;
-  const { data, error, isLoading } = useGraphQLQuery(
-    ["getUsers"],
-    GET_APPS,
-    {
-      user_address: address,
-    }
-  );
+  const { data } = useGraphQLQuery(["getUsers"], GET_APPS, {
+    user_address: address,
+  });
 
-  if (isLoading) {
-    return <div>loading apps...</div>;
-  }
   return (
     <Table>
       <TableCaption>A list of your created apps.</TableCaption>
@@ -84,7 +74,7 @@ export default function AppTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data?.apps &&
+        {data?.apps ? (
           data?.apps.map((app, i) => (
             <TableRow key={i}>
               <TableCell className="font-medium">
@@ -115,7 +105,16 @@ export default function AppTable() {
                 </Link>
               </TableCell>
             </TableRow>
-          ))}
+          ))
+        ) : (
+          <TableRow>
+            {new Array(3).fill("").map((_, i) => (
+              <TableCell key={i}>
+                <Skeleton className="h-[25px] w-full" />
+              </TableCell>
+            ))}
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

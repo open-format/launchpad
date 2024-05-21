@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useLogin, usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
 import { fundAccount } from "../_actions";
 
 export const LoginForm = () => {
   const { ready, authenticated } = usePrivy();
-  // Disable login when Privy is not ready or the user is already authenticated
   const disableLogin = !ready || (ready && authenticated);
 
   const router = useRouter();
@@ -27,9 +27,16 @@ export const LoginForm = () => {
   });
 
   return (
-    <div>
-      <Button disabled={disableLogin} onClick={login}>
-        Get Started
+    <div className="flex items-center justify-center">
+      <Button
+        size="lg"
+        className={cn(
+          { "opacity-0": disableLogin },
+          "bg-[#FFF404] text-black hover:bg-[#FFF863] shadow font-bold text-xl"
+        )}
+        onClick={login}
+      >
+        Start Building
       </Button>
     </div>
   );

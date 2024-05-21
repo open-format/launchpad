@@ -43,7 +43,7 @@ export default async function Loading() {
           <div className="space-y-4">
             <ValueBox
               label="App ID"
-              description="This the App ID used to interact with your onchain application."
+              description="This is the App ID used to interact with your onchain application."
               value=""
               copyText="App ID copied to clipboard."
               isLoading={true}
@@ -51,7 +51,7 @@ export default async function Loading() {
 
             <ValueBox
               label="XP Token Address"
-              description="This the on-chain token address for the XP token associated with this dApp. This value is required for the SDK only."
+              description="This is the onchain token address for the XP token associated with this dApp. This value is required for the SDK only."
               value=""
               isLoading={true}
               copyText="App ID copied to clipboard."
