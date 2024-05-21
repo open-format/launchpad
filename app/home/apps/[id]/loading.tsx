@@ -1,11 +1,6 @@
 import ChainName from "@/components/chain-name";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -15,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
 import { InfoIcon } from "lucide-react";
+import CreateBadgeDialog from "./create-badge";
 
 export default async function Loading() {
   return (
@@ -22,7 +18,7 @@ export default async function Loading() {
       <Skeleton className="w-[250px] h-[30px]" />
       <Card>
         <CardHeader>
-          <CardTitle>Keys</CardTitle>
+          <h2>Keys</h2>
           <div className="flex space-x-2">
             <ChainName chain="arbitrumSepolia" />
             <TooltipProvider>
@@ -47,7 +43,7 @@ export default async function Loading() {
           <div className="space-y-4">
             <ValueBox
               label="App ID"
-              description="This the App ID used to interact with your onchain application."
+              description="This is the App ID used to interact with your onchain application."
               value=""
               copyText="App ID copied to clipboard."
               isLoading={true}
@@ -55,7 +51,7 @@ export default async function Loading() {
 
             <ValueBox
               label="XP Token Address"
-              description="This the on-chain token address for the XP token associated with this dApp. This value is required for the SDK only."
+              description="This is the onchain token address for the XP token associated with this dApp. This value is required for the SDK only."
               value=""
               isLoading={true}
               copyText="App ID copied to clipboard."
@@ -63,11 +59,22 @@ export default async function Loading() {
           </div>
         </CardContent>
       </Card>
-      {/* <div className="flex justify-between">
-        <h1>Badges</h1>
-        <CreateBadgeDialog />
-      </div>
-      <BadgeGrid /> */}
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between">
+            <h2>Badges</h2>
+            <CreateBadgeDialog />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <ValueBox
+            label=""
+            value=""
+            isLoading={true}
+            copyText="Badge ID copied to clipboard."
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

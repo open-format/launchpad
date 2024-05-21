@@ -11,3 +11,7 @@ export function addressSplitter(
 ): string {
   return address.slice(0, split) + "..." + address.slice(-split);
 }
+
+export function capitalizeString(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+}

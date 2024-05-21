@@ -1,31 +1,23 @@
 "use client";
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useSupabaseClient from "@/lib/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import WalletAvatar from "./gradient-avatar";
 
-export default function Profile({ user }: { user: User }) {
+export default function Profile() {
   const { setTheme, theme } = useTheme();
-  const supabase = useSupabaseClient();
-  const router = useRouter();
+  const { ready, logout, user } = usePrivy();
 
-  function signOut() {
-    supabase.auth.signOut();
-    router.push("/login");
+  if (!ready) {
+    return <p>Loading...</p>;
   }
 
   function toggleTheme() {
@@ -35,29 +27,39 @@ export default function Profile({ user }: { user: User }) {
       setTheme("dark");
     }
   }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="flex items-center space-x-2 m-3 justify-center">
-          <Avatar>
-            <AvatarImage src={user.user_metadata["avatar_url"]} />
-            <AvatarFallback className="font-bold">
-              {user.user_metadata["name"]
-                ? user.user_metadata["name"].charAt(0)
-                : ""}
-            </AvatarFallback>
-          </Avatar>
-          <p className="font-bold truncate">{user.email}</p>
+          <WalletAvatar seed={user?.wallet?.address} size={32} />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <div className="flex flex-col space-y-2 items-center m-3 justify-center">
+          <WalletAvatar seed={user?.wallet?.address} size={32} />
+          {user?.github?.name && (
+            <p className="font-bold  text-xs truncate max-w-[250px]">
+              @{user?.github?.username}
+            </p>
+          )}
+          {user?.email?.address && (
+            <p className="font-bold  text-xs truncate max-w-[250]">
+              {user?.email.address}
+            </p>
+          )}
+        </div>
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/home/settings">Settings</Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={toggleTheme}>
           Toggle Theme
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={signOut}>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

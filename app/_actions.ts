@@ -1,18 +1,11 @@
 "use server";
 
-import { appFactoryAbi } from "@/abis/AppFactory";
-import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
 import { trackEvent } from "@/lib/analytics";
-import { contractAddresses } from "@/lib/constants";
-import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
-import { handleTransaction } from "@/lib/transactions";
-import { getAccountClient } from "@/lib/viem/config";
 import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
 import { Resend } from "resend";
-import { parseEther, stringToHex } from "viem";
 
 // @TODO: Implement magic link
 export async function signInWithOtp({ email }: { email: string }) {
@@ -23,35 +16,7 @@ export async function signInWithOtp({ email }: { email: string }) {
   return JSON.stringify(result);
 }
 
-export async function createWeb3Account(
-  password: string
-): Promise<KeyState> {
-  const wallet = ethers.Wallet.createRandom();
-  const supabase = await createSupabaseServerClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const keystoreJson = await wallet.encrypt(password);
-
-  if (!user) {
-    throw new Error("Account not found, please try again.");
-  }
-
-  if (!wallet.mnemonic) {
-    throw new Error("Recovery phrase generation failed.");
-  }
-
-  await supabase
-    .from("wallet")
-    .upsert({
-      id: user.id,
-      address: wallet.address,
-      keystore: keystoreJson,
-    })
-    .select();
-
+export async function fundAccount(address: string): Promise<boolean> {
   if (
     process.env.ACCOUNT_BALANCE_SERVICE_URL &&
     process.env.ACCOUNT_BALANCE_SERVICE_AUTH_TOKEN
@@ -63,8 +28,8 @@ export async function createWeb3Account(
         Authorization: `Bearer ${process.env.ACCOUNT_BALANCE_SERVICE_AUTH_TOKEN}`,
       },
       body: JSON.stringify({
-        user_address: wallet.address,
-        amount: process.env.ACCOUNT_BALANCE_AMOUNT ?? 0.2,
+        user_address: address,
+        amount: process.env.ACCOUNT_BALANCE_AMOUNT ?? "0.2",
       }),
     })
       .then((response) => response.json())
@@ -73,15 +38,7 @@ export async function createWeb3Account(
 
   await trackEvent({ event_name: "Create web3 Account" });
 
-  return {
-    address: wallet.address,
-    encryptedAccountKey: encrypt(
-      wallet.privateKey,
-      process.env.SECRET_KEY!
-    ),
-    privateKey: wallet.privateKey,
-    recoveryPhrase: wallet.mnemonic?.phrase,
-  };
+  return true;
 }
 
 export async function getAccountAddress(): Promise<
@@ -161,64 +118,20 @@ export async function revealAccountKey(
   }
 }
 
-export async function createAPIKey(password: string) {
+export async function generateChallenge(address: string) {
   try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user.id)
-      .maybeSingle();
-
-    const decrypted = await ethers.Wallet.fromEncryptedJson(
-      wallet.data.keystore,
-      password
-    );
-
-    const { account, accountClient } = getAccountClient(
-      decrypted.privateKey
-    );
-
     const challenge = await fetch(
       "https://api.openformat.tech/key/challenge",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ public_address: account.address }),
+        body: JSON.stringify({ public_address: address }),
       }
     )
       .then((response) => response.json())
       .catch((err) => console.error(err));
 
-    const signature = await accountClient.signMessage({
-      message: challenge.challenge,
-    });
-
-    const verify = await fetch(
-      "https://api.openformat.tech/key/verify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          public_address: account.address,
-          signature: signature,
-        }),
-      }
-    )
-      .then((response) => response.json())
-      .catch((err) => console.error(err));
-
-    await trackEvent({ event_name: "Generate API Key" });
-
-    return verify.api_key;
+    return challenge;
   } catch (error: any) {
     if (
       error.code === "INVALID_ARGUMENT" &&
@@ -231,62 +144,28 @@ export async function createAPIKey(password: string) {
   }
 }
 
-export async function createApp(name: string, password: string) {
+export async function verifyChallenge(
+  address: string,
+  signature: string
+) {
   try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const verify = await fetch(
+      "https://api.openformat.tech/key/verify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          public_address: address,
+          signature: signature,
+        }),
+      }
+    )
+      .then((response) => response.json())
+      .catch((err) => console.error(err));
 
-    if (!user) {
-      redirect("/login");
-    }
+    await trackEvent({ event_name: "Generate API Key" });
 
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (!wallet) {
-      throw new Error("Account not found, please try again.");
-    }
-
-    const decrypted = await ethers.Wallet.fromEncryptedJson(
-      wallet.data.keystore,
-      password
-    );
-
-    const appId = await handleTransaction(
-      decrypted.privateKey,
-      contractAddresses.APP_FACTORY,
-      appFactoryAbi,
-      "create",
-      [stringToHex(name, { size: 32 }), decrypted.address],
-      "Created"
-    );
-
-    const xpAddress = await handleTransaction(
-      decrypted.privateKey,
-      appId as `0x${string}`,
-      tokenFactoryAbi,
-      "createERC20",
-      [
-        name,
-        "XP",
-        18,
-        parseEther("0"),
-        stringToHex("Base", { size: 32 }),
-      ],
-      "Created"
-    );
-
-    await trackEvent({ event_name: "Create dApp" });
-
-    return {
-      appId: appId,
-      xpAddress: xpAddress,
-    };
+    return verify.api_key;
   } catch (error: any) {
     if (
       error.code === "INVALID_ARGUMENT" &&
@@ -356,9 +235,10 @@ export async function getApp(app: string) {
           xpToken {
             id
           }
-          badges {
+          badges(orderBy: createdAt, orderDirection: desc) {
             id
             name
+            createdAt
           }
         }
       }
@@ -376,29 +256,36 @@ export async function getApp(app: string) {
   }
 }
 
-export async function deleteAccount() {
+export async function validatePassword(password: string) {
   try {
-    const supabase = await createSupabaseServerClient(true);
+    const supabase = await createSupabaseServerClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      redirect("/login");
-    }
+    const wallet = await supabase
+      .from("wallet")
+      .select()
+      .eq("id", user?.id)
+      .maybeSingle();
 
-    const { error } = await supabase.auth.admin.deleteUser(user.id);
+    const decrypted = await ethers.Wallet.fromEncryptedJson(
+      wallet.data.keystore,
+      password
+    );
 
-    if (error) {
+    return true;
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
       throw new Error(error.message);
     }
-
-    await supabase.auth.signOut();
-  } catch (error: any) {
-    throw new Error(error.message);
   }
-
-  redirect("/register");
 }
 
 export async function addUserToAudience() {
@@ -428,4 +315,37 @@ export async function addUserToAudience() {
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function deleteAccount() {
+  try {
+    const supabase = await createSupabaseServerClient(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      redirect("/login");
+    }
+
+    const { error } = await supabase.auth.admin.deleteUser(user.id);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    await supabase.auth.signOut();
+  } catch (error: any) {
+    console.log({ error });
+    if (
+      error.code === "INVALID_ARGUMENT" &&
+      error.argument === "password"
+    ) {
+      throw new Error("Incorrect password, please try again.");
+    } else {
+      throw new Error(error.message);
+    }
+  }
+
+  redirect("/register");
 }

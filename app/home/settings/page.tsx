@@ -1,4 +1,16 @@
-import { getAccountAddress } from "@/app/_actions";
+"use client";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,35 +19,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
-import { CreateAccountForm } from "./create-account-form";
+import { usePrivy } from "@privy-io/react-auth";
+import { Label } from "@radix-ui/react-dropdown-menu";
 import { CreateAPIKey } from "./create-api-key";
-import DeleteAccountForm from "./delete-account-form";
-import RevealKey from "./reveal-key-form";
+import RevealKeyForm from "./reveal-key-form";
 
-async function getData() {
-  const res = await getAccountAddress();
-  return res.data;
-}
-
-export default async function SettingsPage() {
-  //@TODO correct handle errors
-  const data = await getData().catch((e) => e);
+export default function SettingsPage() {
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
 
   return (
     <div className="flex w-full flex-col space-y-5">
@@ -44,26 +36,30 @@ export default async function SettingsPage() {
         <CardHeader>
           <CardTitle>Web3 Account</CardTitle>
           <CardDescription>
-            Here is your web3 account. It's used to do transactions.
+            Your web3 account is responsible for sending and receiving
+            onchain rewards.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {data && data.address ? (
+          {address && (
             <div>
               <div>
                 <Label>Public Key</Label>
                 <ValueBox
-                  value={data.address}
+                  value={address}
                   copyText="Public Key copied to clipboard."
+                  description="Your public key is used to receive rewards."
                 />
               </div>
               <div>
                 <Label>Private Key</Label>
-                <RevealKey />
+                <RevealKeyForm />
+                <p className="text-sm text-muted-foreground py-1">
+                  Your private key is used to authorise the sending of
+                  rewards from your dApps.
+                </p>
               </div>
             </div>
-          ) : (
-            <CreateAccountForm />
           )}
         </CardContent>
       </Card>
@@ -72,49 +68,40 @@ export default async function SettingsPage() {
           <CardTitle>API Keys</CardTitle>
           <CardDescription>
             Securely create a new API key linked to your web3 account.
-            For your security, API keys are only displayed once at the
-            time of creation.
+            Please be careful, as creating a new API key will override
+            any existing keys, disabling them. For your security, we
+            only display your API key once at the time of creation.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {data.address ? (
-            <CreateAPIKey />
-          ) : (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button disabled>Generate New API Key</Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[300px]">
-                  You need to create a web3 account before you can
-                  generate an API Key.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-        </CardContent>
+        <CardContent>{address && <CreateAPIKey />}</CardContent>
       </Card>
       <Card>
         <CardHeader>
           <CardTitle>Account</CardTitle>
         </CardHeader>
         <CardContent>
-          <Dialog>
-            <DialogTrigger>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
               <Button variant="destructive">Delete Account</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will permanently
-                  delete your account and remove your data from our
-                  servers.
-                </DialogDescription>
-              </DialogHeader>
-              <DeleteAccountForm />
-            </DialogContent>
-          </Dialog>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center space-x-2">
+                  <p>Delete Account</p>
+                  <Badge>Coming soon</Badge>
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  If you wish to delete your account, please reach out
+                  to us through our support channels. We're working on
+                  implementing an automatic deletion feature. Thank
+                  you for your patience.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction>Continue</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>

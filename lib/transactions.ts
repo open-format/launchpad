@@ -1,28 +1,29 @@
 import { appFactoryAbi } from "@/abis/AppFactory";
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
-import { BaseError, parseEventLogs } from "viem";
-import { getAccountClient, publicClient } from "./viem/config";
+import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
+import { BaseError, TransactionReceipt, parseEventLogs } from "viem";
+import { publicClient } from "./viem/config";
 
 export async function handleTransaction(
-  pk: string,
+  walletClient: any,
   address: `0x${string}`,
-  abi: typeof appFactoryAbi | typeof tokenFactoryAbi,
-  functionName: "create" | "createERC20",
+  abi:
+    | typeof appFactoryAbi
+    | typeof tokenFactoryAbi
+    | typeof badgeFactoryAbi,
+  functionName: "create" | "createERC20" | "createERC721",
   args: any,
   eventName: "Created"
 ) {
   try {
-    const { account, accountClient } = getAccountClient(pk);
-
     const { request } = await publicClient.simulateContract({
-      account,
       address,
       abi,
       functionName,
       args,
     });
 
-    const result = await accountClient.writeContract(request);
+    const result = await walletClient.writeContract(request);
 
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: result,
@@ -37,6 +38,36 @@ export async function handleTransaction(
     //@DEV This is suitable for now, but may need to be updated in the future.
     return logs[0].args.id;
   } catch (error: any) {
+    console.log({ error });
+    if (error instanceof BaseError) {
+      if (error.details) {
+        throw new Error(error.details);
+      } else if (error.metaMessages) {
+        throw new Error(error.metaMessages[0]);
+      }
+    } else {
+      throw new Error(error.message);
+    }
+  }
+}
+export async function getEventLog(
+  receipt: TransactionReceipt,
+  abi: typeof appFactoryAbi | typeof tokenFactoryAbi,
+  eventName: "Created"
+) {
+  try {
+    const logs = parseEventLogs({
+      abi,
+      eventName,
+      logs: receipt.logs,
+    });
+
+    console.log({ logs });
+
+    //@DEV This is suitable for now, but may need to be updated in the future.
+    return logs[0].args.id;
+  } catch (error: any) {
+    console.log({ error });
     if (error instanceof BaseError) {
       if (error.details) {
         throw new Error(error.details);

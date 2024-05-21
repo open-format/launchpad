@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CreateAppForm } from "@/forms/create-app-form";
+import { CreateBadgeForm } from "@/forms/create-badge-form";
 import { useState } from "react";
 
 export default function CreateBadgeDialog() {
@@ -26,12 +26,16 @@ export default function CreateBadgeDialog() {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create dApp</DialogTitle>
+          <DialogTitle>Create Badge</DialogTitle>
           <DialogDescription>
-            Create a new decentralised app.
+            A badge is an NFT for rewarding engagement and managing
+            access. It could grant entry to exclusive events, verify
+            memberships for premium content, and unlock special
+            in-game features through blockchain verification, among
+            many other uses.
           </DialogDescription>
         </DialogHeader>
-        <CreateAppForm onSubmit={toggle} />
+        <CreateBadgeForm closeDialog={toggle} />
       </DialogContent>
     </Dialog>
   );

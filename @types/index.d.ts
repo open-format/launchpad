@@ -28,9 +28,12 @@ type ErrorMessages = {
 };
 
 // Subgraph Data
-interface AppData {
-  apps: App[];
-}
+type Badge = {
+  id: string;
+  name: string;
+  metadataURI: string;
+  createdAt: string;
+};
 
 type App = {
   id: string;
@@ -39,4 +42,11 @@ type App = {
   xpToken: {
     id: string;
   };
+  badges: Badge[];
 };
+
+interface AppData {
+  apps: App[];
+}
+
+type Web3AccountAddress = `0x${string}`;

@@ -10,7 +10,7 @@ import {
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AspectRatio } from "./ui/aspect-ratio";
 
 type Item = {
@@ -21,6 +21,22 @@ type Item = {
 
 export default function GetStarted() {
   const [isVisible, setIsVisible] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (localStorage.getItem("showGetStarted") === "false") {
+      setIsVisible(false);
+    }
+  }, []);
+
+  function hide() {
+    localStorage.setItem("showGetStarted", "false");
+    setIsVisible(false);
+  }
+
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   const ITEMS: Item[] = [
     {
       title: "First day with Buildship",
@@ -47,7 +63,7 @@ export default function GetStarted() {
         <div className="border rounded-md p-4">
           <div className="flex justify-between items-center">
             <h2>Your first week in OPENFORMAT</h2>
-            <X onClick={() => setIsVisible(false)} />
+            <X onClick={hide} />
           </div>
           <div className="grid w-full gap-5 md:grid-cols-2 lg:grid-cols-3 px-12">
             {ITEMS.map((item, i) => (
