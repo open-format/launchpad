@@ -46,7 +46,7 @@ export default async function SettingsPage() {
                 <ValueBox
                   value={address}
                   copyText="Public Key copied to clipboard."
-                  description="Your public key is used to receive rewards"
+                  description="Your public key is used to receive rewards."
                 />
               </div>
               <div>

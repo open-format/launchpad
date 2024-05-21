@@ -64,13 +64,15 @@ export function CreateBadgeForm({
       router.refresh();
 
       toast.success(`Badge successfully created!`, {
-        description: "You can reward it to you users.",
+        description:
+          "Copy the name or badge ID to start using it in your application.",
         action: {
-          label: "View docs",
+          label: "Learn more",
           onClick: () =>
             window.open(`${URLS.docs}/functions/rewards`, "_blank"),
         },
-        duration: 5000,
+        duration: 10000,
+        dismissible: true,
       });
 
       form.reset();

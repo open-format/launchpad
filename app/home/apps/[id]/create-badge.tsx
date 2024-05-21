@@ -27,7 +27,13 @@ export default function CreateBadgeDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Badge</DialogTitle>
-          <DialogDescription>Create a badge.</DialogDescription>
+          <DialogDescription>
+            A badge is an NFT for rewarding engagement and managing
+            access. It could grant entry to exclusive events, verify
+            memberships for premium content, and unlock special
+            in-game features through blockchain verification, among
+            many other uses.
+          </DialogDescription>
         </DialogHeader>
         <CreateBadgeForm closeDialog={toggle} />
       </DialogContent>

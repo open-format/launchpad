@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
+import { capitalizeString } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import CreateBadgeDialog from "./create-badge";
 
@@ -34,7 +35,7 @@ export default async function ViewAppPage({
     <div className="space-y-5">
       {app && (
         <h1 className="text-3xl font-bold leading-none tracking-tight">
-          {app.name}
+          {capitalizeString(app.name)}
         </h1>
       )}
       <Card>
@@ -66,7 +67,7 @@ export default async function ViewAppPage({
               {app.id && (
                 <ValueBox
                   label="App ID"
-                  description="This the App ID used to interact with your onchain application."
+                  description="This is the App ID used to interact with your onchain application."
                   value={app?.id}
                   copyText="App ID copied to clipboard."
                 />
@@ -74,7 +75,7 @@ export default async function ViewAppPage({
               {app?.xpToken?.id && (
                 <ValueBox
                   label="XP Token Address"
-                  description="This the on-chain token address for the XP token associated with this dApp. This value is required for the SDK only."
+                  description="This is the onchain token address for the XP token associated with this dApp. This value is required for the SDK only."
                   value={app?.xpToken.id}
                   copyText="App ID copied to clipboard."
                 />
