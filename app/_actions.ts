@@ -9,16 +9,11 @@ import { encrypt } from "@/lib/encryption";
 import createSupabaseServerClient from "@/lib/supabase/server";
 import { handleTransaction } from "@/lib/transactions";
 import { getAccountClient } from "@/lib/viem/config";
-import { ThirdwebStorage } from "@thirdweb-dev/storage";
 import { ethers } from "ethers";
 import { gql, request } from "graphql-request";
 import { redirect } from "next/navigation";
 import { Resend } from "resend";
 import { parseEther, stringToHex } from "viem";
-
-const storage = new ThirdwebStorage({
-  secretKey: process.env.THIRDWEB_SECRET, // You can get one from dashboard settings
-});
 
 // @TODO: Implement magic link
 export async function signInWithOtp({ email }: { email: string }) {
@@ -382,28 +377,6 @@ export async function getApp(app: string) {
   }
 }
 
-export async function uploadFileToIPFS(formData: FormData) {
-  const file = formData.get("file") as File;
-
-  // Convert the file to a Buffer
-  const buffer = await file.arrayBuffer(); // Convert file to ArrayBuffer
-  const fileBuffer = Buffer.from(buffer); // Convert ArrayBuffer to Buffer
-
-  const ipfsHash = await storage.upload(fileBuffer, {
-    uploadWithoutDirectory: true,
-  });
-
-  return ipfsHash;
-}
-
-export async function uploadJSONToIPFS(data: any) {
-  const ipfsHash = await storage.upload(data, {
-    uploadWithoutDirectory: true,
-  });
-
-  return ipfsHash;
-}
-
 export async function validatePassword(password: string) {
   try {
     const supabase = await createSupabaseServerClient();
@@ -439,8 +412,7 @@ export async function validatePassword(password: string) {
 export async function createBadge(
   appId: string,
   name: string,
-  password: string,
-  metadataURI: string
+  password: string
 ) {
   try {
     const supabase = await createSupabaseServerClient();

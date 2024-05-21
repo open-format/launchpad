@@ -40,12 +40,7 @@ export function CreateBadgeForm({
     data: z.infer<typeof FormSchema>
   ) {
     try {
-      await createBadge(
-        params.id as string,
-        data.name,
-        "hello",
-        "ipfs://"
-      );
+      await createBadge(params.id as string, data.name, "hello");
 
       toast.success(`Badge successfully created!`, {
         description: "You can reward it to you users.",
