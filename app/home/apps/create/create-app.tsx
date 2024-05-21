@@ -86,30 +86,11 @@ export default function CreateAppDialog({
     data: z.infer<typeof FormSchema>
   ) {
     try {
-      toggle();
-      const startTx = toast.loading("Confirm to deploy your dApp", {
-        description:
-          "We're using a testnet and covering your gas costs.",
-        dismissible: false,
-        duration: 60000,
-      });
-
       const hash = await writeContract(config, {
         address: contractAddresses.APP_FACTORY,
         abi: appFactoryAbi,
         functionName: "create",
         args: [stringToHex(data.name, { size: 32 }), address],
-      });
-
-      toast.dismiss(startTx);
-      toast.success("App successfully created!", {
-        description: "You can now create badges for this dApp.",
-        action: {
-          label: "View Transaction",
-          onClick: () =>
-            window.open(`https://sepolia.arbiscan.io/tx/${hash}`),
-        },
-        duration: 5000,
       });
 
       const transactionReceipt = await waitForTransactionReceipt(
@@ -123,16 +104,6 @@ export default function CreateAppDialog({
         transactionReceipt,
         appFactoryAbi,
         "Created"
-      );
-
-      const XpToken = toast.loading(
-        "Confirm to create your XP Token",
-        {
-          description:
-            "We're using a testnet and covering your gas costs.",
-          dismissible: false,
-          duration: 60000,
-        }
       );
 
       if (appId) {
@@ -150,9 +121,7 @@ export default function CreateAppDialog({
         });
       }
 
-      toast.dismiss(XpToken);
-
-      toast.success("XP Token successfully created!", {
+      toast.success("App successfully created!", {
         description: "You can now create badges for this dApp.",
         action: {
           label: "View Transaction",
@@ -164,15 +133,12 @@ export default function CreateAppDialog({
 
       router.push(`apps/${appId}`);
     } catch (e: any) {
-      toast.dismiss(startTx);
-      console.log({ e });
       if (e.message.includes("password")) {
         setError("password", {
           type: "custom",
           message: e.message,
         });
       } else if (e.metaMessages[0].includes("nameAlreadyUsed")) {
-        console.log("here");
         setError("name", {
           type: "custom",
           message: getErrorMessage(e.metaMessages[0]),
@@ -284,12 +250,6 @@ export default function CreateAppDialog({
                 </FormItem>
               )}
             />
-
-            <p>
-              We're now going to deploy an App and XP Token on chain.
-              This is required you to confirm two transaction. We are
-              currently covering the gas costs.
-            </p>
 
             {isSubmitting ? (
               <Button disabled>

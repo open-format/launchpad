@@ -15,10 +15,13 @@ import { Input } from "@/components/ui/input";
 import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-import { createBadge } from "@/app/_actions";
-import { URLS } from "@/lib/constants";
+import { appFactoryAbi } from "@/abis/AppFactory";
+import { URLS, contractAddresses } from "@/lib/constants";
+import { writeContract } from "@wagmi/core";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { stringToHex } from "viem";
+import { useAccount, useConfig } from "wagmi";
 
 const FormSchema = z.object({
   name: z.string().min(3).max(32),
@@ -34,13 +37,20 @@ export function CreateBadgeForm({
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const config = useConfig();
+  const { address } = useAccount();
   const params = useParams();
 
   async function handleFormSubmission(
     data: z.infer<typeof FormSchema>
   ) {
     try {
-      await createBadge(params.id as string, data.name, "hello");
+      await writeContract(config, {
+        address: contractAddresses.APP_FACTORY,
+        abi: appFactoryAbi,
+        functionName: "create",
+        args: [stringToHex(data.name, { size: 32 }), address],
+      });
 
       toast.success(`Badge successfully created!`, {
         description: "You can reward it to you users.",
