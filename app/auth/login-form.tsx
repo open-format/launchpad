@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
 import { fundAccount } from "../_actions";
 
@@ -30,12 +30,15 @@ export const LoginForm = () => {
     <div className="flex items-center justify-center">
       <Button
         size="lg"
-        className={cn(
-          { "opacity-0": disableLogin },
+        disabled={disableLogin}
+        className={
           "bg-[#FFF404] text-black hover:bg-[#ffe504] hover:shadow font-bold text-xl"
-        )}
+        }
         onClick={login}
       >
+        {disableLogin && (
+          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+        )}
         Start Building
       </Button>
     </div>

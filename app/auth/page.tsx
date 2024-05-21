@@ -46,6 +46,7 @@ export default async function LoginPage() {
             The dashboard for the OPENFORMAT onchain rewards platform
           </h2>
         </div>
+        <LoginForm />
 
         <div className="text-left px-1">
           <h3>Features:</h3>
@@ -64,11 +65,10 @@ export default async function LoginPage() {
             })}
           </ol>
         </div>
-        <LoginForm />
         <div>
           <blockquote className="space-y-2 text-center">
-            <p className="text-lg">
-              "Using OPENFORMAT to power our first Web3 enabled
+            <p className="text-muted-foreground">
+              "Using OPENFORMAT to power our first web3 enabled
               project took all of the hassle out of dealing with smart
               contracts and got us up and running much quicker"
             </p>
