@@ -1,33 +1,15 @@
-"use client";
-
 import { ThemeProvider } from "@/components/theme-provider";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
 import { Manrope as FontSans } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
-import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import Script from "next/script";
-import { arbitrumSepolia } from "viem/chains";
-import { http } from "wagmi";
 import "./globals.css";
 import PrivyProvider from "./providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-});
-
-const queryClient = new QueryClient();
-
-export const config = createConfig({
-  chains: [arbitrumSepolia], // Pass your required chains as an array
-  transports: {
-    [arbitrumSepolia.id]: http(),
-  },
 });
 
 export default function RootLayout({
@@ -50,11 +32,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <PrivyProvider>
-            <QueryClientProvider client={queryClient}>
-              <WagmiProvider config={config}>
-                {children}
-              </WagmiProvider>
-            </QueryClientProvider>
+            {children}
             <Toaster
               toastOptions={{ classNames: { error: "bg-red-500" } }}
             />
