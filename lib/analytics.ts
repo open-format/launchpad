@@ -1,12 +1,5 @@
 import { headers } from "next/headers";
 
-type AnalyticsEvent = {
-  event_name: string;
-  event_meta?: {
-    [key: string]: string;
-  };
-};
-
 function getHeaders(): {
   ip: string;
   userAgent: string;
@@ -28,7 +21,10 @@ function getHeaders(): {
 
   return { ip, userAgent, protocol, domain };
 }
-export async function trackEvent(event: AnalyticsEvent) {
+export async function trackEvent(
+  event: AnalyticsEvent
+): Promise<unknown> {
+  "use server";
   const { ip, userAgent, protocol, domain } = getHeaders();
 
   try {
@@ -40,6 +36,7 @@ export async function trackEvent(event: AnalyticsEvent) {
       },
       body: JSON.stringify({
         event_name: event.event_name,
+        event_meta: event.event_meta,
         url: `${protocol}://${domain}`,
         ip: ip,
         accept_language: "en-US",
