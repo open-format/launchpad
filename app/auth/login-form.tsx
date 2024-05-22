@@ -39,7 +39,7 @@ export const LoginForm = () => {
         {disableLogin && (
           <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
         )}
-        Start Building
+        Continue
       </Button>
     </div>
   );

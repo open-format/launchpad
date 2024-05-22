@@ -40,16 +40,12 @@ export default async function LoginPage() {
         <Badge>BETA</Badge>
       </header>
       <div className="max-w-prose mx-auto flex flex-col items-between justify-between h-full">
-        <div className="text-center space-y-2 mt-4">
-          <h1 className="text-5xl">Welcome to the Launchpad</h1>
-          <h2>
-            The dashboard for the OPENFORMAT onchain rewards platform
-          </h2>
+        <div className="text-center space-y-4 mt-4">
+          <h1 className="text-4xl">Start Building</h1>
+          <LoginForm />
         </div>
-        <LoginForm />
 
         <div className="text-left px-1">
-          <h3>Features:</h3>
           <ol className="space-y-4 py-4 px-6 list-disc">
             {ITEMS.map((item, i) => {
               return (
