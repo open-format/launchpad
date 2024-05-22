@@ -1,5 +1,3 @@
-"use client";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,66 +13,19 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ValueBox from "@/components/value-box";
-import { usePrivy } from "@privy-io/react-auth";
-import { Label } from "@radix-ui/react-dropdown-menu";
-import { CreateAPIKey } from "./create-api-key";
-import RevealKeyForm from "./reveal-key-form";
+import { trackEvent } from "@/lib/analytics";
+import APIKeys from "./api-keys";
+import Web3Account from "./web3-account";
 
 export default function SettingsPage() {
-  const { user } = usePrivy();
-  const address = user?.wallet?.address;
-
   return (
     <div className="flex w-full flex-col space-y-5">
       <h1>Settings</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>Web3 Account</CardTitle>
-          <CardDescription>
-            Your web3 account is responsible for sending and receiving
-            onchain rewards.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {address && (
-            <div>
-              <div>
-                <Label>Public Key</Label>
-                <ValueBox
-                  value={address}
-                  copyText="Public Key copied to clipboard."
-                  description="Your public key is used to receive rewards."
-                />
-              </div>
-              <div>
-                <Label>Private Key</Label>
-                <RevealKeyForm />
-                <p className="text-sm text-muted-foreground py-1">
-                  Your private key is used to authorise the sending of
-                  rewards from your dApps.
-                </p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>API Keys</CardTitle>
-          <CardDescription>
-            Securely create a new API key linked to your web3 account.
-            Please be careful, as creating a new API key will override
-            any existing keys, disabling them. For your security, we
-            only display your API key once at the time of creation.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>{address && <CreateAPIKey />}</CardContent>
-      </Card>
+      <Web3Account trackEvent={trackEvent} />
+      <APIKeys trackEvent={trackEvent} />
       <Card>
         <CardHeader>
           <CardTitle>Account</CardTitle>

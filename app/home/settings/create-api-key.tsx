@@ -27,7 +27,11 @@ const FormSchema = z.object({
   password: z.any(),
 });
 
-export function CreateAPIKey() {
+interface CreateAPIKeyProps {
+  trackEvent: TrackEventFunction;
+}
+
+export function CreateAPIKey({ trackEvent }: CreateAPIKeyProps) {
   const [apiKey, setAPIKey] = useState<string | null>();
   const [isOpen, setIsOpen] = useState<boolean>();
   const { signMessage, user } = usePrivy();
@@ -43,9 +47,7 @@ export function CreateAPIKey() {
   } = form;
   const config = useConfig();
 
-  async function handleFormSubmission(
-    data: z.infer<typeof FormSchema>
-  ) {
+  async function handleFormSubmission() {
     try {
       if (!address) {
         throw new Error("Web3 account not found.");
@@ -74,6 +76,8 @@ export function CreateAPIKey() {
         setAPIKey(data);
         setIsOpen(true);
       });
+
+      await trackEvent({ event_name: "Create API Key" });
     } catch (e: any) {
       console.log({ e });
       if (e.message.includes("password")) {
@@ -123,6 +127,11 @@ export function CreateAPIKey() {
           <div>
             {apiKey && (
               <ValueBox
+                trackEvent={{
+                  fn: trackEvent,
+                  event_name: "API Key",
+                }}
+                label="API Key"
                 value={apiKey}
                 copyText="API Key copied to clipboard."
               />

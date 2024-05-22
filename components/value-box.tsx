@@ -13,6 +13,7 @@ export default function ValueBox({
   label,
   description,
   isLoading,
+  trackEvent,
 }: {
   value: string;
   copyText?: string;
@@ -20,6 +21,15 @@ export default function ValueBox({
   label?: string;
   description?: string;
   isLoading?: boolean;
+  trackEvent?: {
+    fn: TrackEventFunction;
+    event_name:
+      | "Badge ID"
+      | "dApp ID"
+      | "API Key"
+      | "XP Token Address"
+      | "Public Key";
+  };
 }) {
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
@@ -34,6 +44,12 @@ export default function ValueBox({
       navigator.clipboard.writeText(value);
       setIsCopied(true);
       toast.success(copyText);
+
+      if (trackEvent) {
+        trackEvent.fn({
+          event_name: `${trackEvent.event_name} Copied`,
+        });
+      }
     } catch (e) {
       toast.error("error copying text. Please try again");
     }
@@ -42,7 +58,7 @@ export default function ValueBox({
   return (
     <div className="flex space-x-2 flex-1">
       <div className={cn({ "flex-1": !basic }, "space-y-1")}>
-        {label && <h3>{label}</h3>}
+        {label && <label>{label}</label>}
         {description && (
           <p className="text-sm text-muted-foreground">
             {description}
