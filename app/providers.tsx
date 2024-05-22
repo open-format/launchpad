@@ -35,7 +35,7 @@ export default function PrivyProvider({
         appearance: {
           //@ts-ignore
           theme: theme,
-          accentColor: "#FFF400",
+          accentColor: theme === "light" ? "#000" : "#FFF",
           logo: "https://avatars.githubusercontent.com/u/121942809?s=200&v=4",
         },
         defaultChain: arbitrumSepolia,
