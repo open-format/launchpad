@@ -15,9 +15,13 @@ type Badge = {
 
 interface BadgeTableProps {
   badges: Badge[] | undefined;
+  trackEvent: TrackEventFunction;
 }
 
-export default function BadgeTable({ badges }: BadgeTableProps) {
+export default function BadgeTable({
+  badges,
+  trackEvent,
+}: BadgeTableProps) {
   if (!badges || !badges.length) {
     return <EmptyState />;
   }
@@ -26,6 +30,10 @@ export default function BadgeTable({ badges }: BadgeTableProps) {
       {badges &&
         badges?.map((badge) => (
           <ValueBox
+            trackEvent={{
+              fn: trackEvent,
+              event_name: "Badge ID",
+            }}
             label={capitalizeString(badge.name)}
             description={`created ${timeAgo(
               Number(badge.createdAt)
@@ -55,6 +63,7 @@ function EmptyState() {
           badge to reward users for their achievements and boost
           engagement.
         </p>
+        {/* @ts-ignore */}
         <CreateBadgeDialog />
       </div>
     </div>
