@@ -1,5 +1,4 @@
 import AppTable from "@/components/app-table";
-import GetStarted from "@/components/get-started";
 import { trackEvent } from "@/lib/analytics";
 import CreateAppDialog from "./create/create-app";
 
@@ -11,7 +10,8 @@ export default async function AppsPage() {
           <h1>dApps</h1>
           <CreateAppDialog trackEvent={trackEvent} />
         </div>
-        <GetStarted />
+        {/* @DEV Hidden until we content is available */}
+        {/* <GetStarted /> */}
       </div>
       <AppTable trackEvent={trackEvent} />
     </div>
