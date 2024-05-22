@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { usePrivy } from "@privy-io/react-auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import WalletAvatar from "./gradient-avatar";
@@ -15,6 +16,7 @@ import WalletAvatar from "./gradient-avatar";
 export default function Profile() {
   const { setTheme, theme } = useTheme();
   const { ready, logout, user } = usePrivy();
+  const queryClient = useQueryClient();
 
   if (!ready) {
     return <p>Loading...</p>;
@@ -26,6 +28,11 @@ export default function Profile() {
     } else {
       setTheme("dark");
     }
+  }
+
+  function handleLogout() {
+    queryClient.removeQueries();
+    logout();
   }
 
   return (
@@ -59,7 +66,9 @@ export default function Profile() {
           Toggle Theme
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
+          Logout
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

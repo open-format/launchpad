@@ -70,7 +70,7 @@ export default function AppTable() {
     return null;
   }
 
-  const { data } = useGraphQLQuery(["getUsers"], GET_APPS, {
+  const { data } = useGraphQLQuery(["getApps"], GET_APPS, {
     user_address: address,
   });
 
