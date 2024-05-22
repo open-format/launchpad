@@ -58,7 +58,7 @@ export default function ValueBox({
   return (
     <div className="flex space-x-2 flex-1">
       <div className={cn({ "flex-1": !basic }, "space-y-1")}>
-        {label && <label>{label}</label>}
+        {label && !basic && <label>{label}</label>}
         {description && (
           <p className="text-sm text-muted-foreground">
             {description}
