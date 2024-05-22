@@ -35,7 +35,9 @@ export default function Profile() {
       ? `@${user?.github?.username}`
       : user?.github?.name ??
           user?.email?.address ??
-          addressSplitter(user?.wallet?.address);
+          (user?.wallet?.address
+            ? addressSplitter(user?.wallet?.address as string)
+            : null);
   }
 
   function handleLogout() {
