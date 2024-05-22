@@ -76,7 +76,11 @@ export function CreateBadgeForm({
       form.reset();
       closeDialog();
     } catch (e: any) {
-      toast.error(getErrorMessage(e.message));
+      if (e.details) {
+        return toast.error(getErrorMessage(e.details));
+      } else if (e.metaMessages?.[0].includes("nameAlreadyUsed")) {
+        toast.error(getErrorMessage(e.message));
+      }
     }
   }
 

@@ -134,8 +134,10 @@ export default function CreateAppDialog() {
 
       router.push(`apps/${appId}`);
     } catch (e: any) {
-      if (e.metaMessages[0].includes("nameAlreadyUsed")) {
-        setError("name", {
+      if (e.details) {
+        return toast.error(getErrorMessage(e.details));
+      } else if (e.metaMessages?.[0].includes("nameAlreadyUsed")) {
+        return setError("name", {
           type: "custom",
           message: getErrorMessage(e.metaMessages[0]),
         });
