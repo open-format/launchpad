@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ValueBox from "@/components/value-box";
+import { trackEvent } from "@/lib/analytics";
 import { capitalizeString } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
 import CreateBadgeDialog from "./create-badge";
@@ -66,6 +67,10 @@ export default async function ViewAppPage({
             <div className="space-y-4">
               {app.id && (
                 <ValueBox
+                  trackEvent={{
+                    fn: trackEvent,
+                    event_name: "dApp ID",
+                  }}
                   label="App ID"
                   description="This is the App ID used to interact with your onchain application."
                   value={app?.id}
@@ -74,6 +79,10 @@ export default async function ViewAppPage({
               )}
               {app?.xpToken?.id && (
                 <ValueBox
+                  trackEvent={{
+                    fn: trackEvent,
+                    event_name: "XP Token Address",
+                  }}
                   label="XP Token Address"
                   description="This is the onchain token address for the XP token associated with this dApp. This value is required for the SDK only."
                   value={app?.xpToken.id}
@@ -89,12 +98,12 @@ export default async function ViewAppPage({
           <CardHeader>
             <div className="flex justify-between">
               <h2>Badges</h2>
-              <CreateBadgeDialog />
+              <CreateBadgeDialog trackEvent={trackEvent} />
             </div>
           </CardHeader>
         )}
         <CardContent>
-          <BadgeTable badges={app?.badges} />
+          <BadgeTable badges={app?.badges} trackEvent={trackEvent} />
         </CardContent>
       </Card>
     </div>

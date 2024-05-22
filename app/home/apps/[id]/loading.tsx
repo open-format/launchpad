@@ -63,6 +63,7 @@ export default async function Loading() {
         <CardHeader>
           <div className="flex justify-between">
             <h2>Badges</h2>
+            {/* @ts-ignore */}
             <CreateBadgeDialog />
           </div>
         </CardHeader>

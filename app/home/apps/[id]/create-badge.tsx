@@ -12,7 +12,11 @@ import {
 import { CreateBadgeForm } from "@/forms/create-badge-form";
 import { useState } from "react";
 
-export default function CreateBadgeDialog() {
+export default function CreateBadgeDialog({
+  trackEvent,
+}: {
+  trackEvent: TrackEventFunction;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   function toggle() {
@@ -35,7 +39,10 @@ export default function CreateBadgeDialog() {
             many other uses.
           </DialogDescription>
         </DialogHeader>
-        <CreateBadgeForm closeDialog={toggle} />
+        <CreateBadgeForm
+          closeDialog={toggle}
+          trackEvent={trackEvent}
+        />
       </DialogContent>
     </Dialog>
   );

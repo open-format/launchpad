@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { trackEvent } from "@/lib/analytics";
 import Image from "next/image";
 import { LoginForm } from "./login-form";
 
@@ -46,7 +47,7 @@ export default async function LoginPage() {
             The dashboard for the OPENFORMAT onchain rewards platform
           </h2>
         </div>
-        <LoginForm />
+        <LoginForm trackEvent={trackEvent} />
 
         <div className="text-left px-1">
           <h3>Features:</h3>

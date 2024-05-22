@@ -62,7 +62,11 @@ export const useGraphQLQuery = (
   });
 };
 
-export default function AppTable() {
+interface AppTableProps {
+  trackEvent: TrackEventFunction;
+}
+
+export default function AppTable({ trackEvent }: AppTableProps) {
   const { user } = usePrivy();
   const address = user?.wallet?.address;
 
@@ -70,9 +74,16 @@ export default function AppTable() {
     return null;
   }
 
-  const { data } = useGraphQLQuery(["getUsers"], GET_APPS, {
+  const { data } = useGraphQLQuery(["getApps"], GET_APPS, {
     user_address: address,
   });
+
+  function handleClick(appName: string) {
+    trackEvent({
+      event_name: "View App",
+      event_meta: { name: appName },
+    });
+  }
 
   return (
     <Table>
@@ -103,15 +114,21 @@ export default function AppTable() {
               </TableCell>
               <TableCell className="hidden lg:block">
                 <ValueBox
+                  trackEvent={{
+                    fn: trackEvent,
+                    event_name: "dApp ID",
+                  }}
                   basic
+                  label="dApp ID"
                   value={app.id}
-                  copyText="App ID copied to clipboard."
+                  copyText="dApp ID copied to clipboard."
                 />
               </TableCell>
               <TableCell className="text-right">
                 <Link
                   className={buttonVariants()}
                   href={`apps/${app.id}`}
+                  onClick={() => handleClick(app.name)}
                 >
                   View
                 </Link>

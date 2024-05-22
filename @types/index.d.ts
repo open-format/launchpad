@@ -50,3 +50,12 @@ interface AppData {
 }
 
 type Web3AccountAddress = `0x${string}`;
+
+// Analytics
+
+interface AnalyticsEvent {
+  event_name: string;
+  event_meta?: Record<string, any>;
+}
+
+type TrackEventFunction = (event: AnalyticsEvent) => Promise<unknown>;
