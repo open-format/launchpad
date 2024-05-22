@@ -3,6 +3,7 @@ import { Manrope as FontSans } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+import { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import PrivyProvider from "./providers";
@@ -11,6 +12,26 @@ const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
+
+export const metadata: Metadata = {
+  title: "OPENFORMAT Launchpad",
+  description:
+    "The dashboard for the OPENFORMAT onchain rewards platform.",
+  viewport: { width: "device-width", initialScale: 1 },
+  openGraph: {
+    type: "website",
+    url: "https://app.openformat.tech",
+    title: "OPENFORMAT Launchpad",
+    description:
+      "The dashboard for the OPENFORMAT onchain rewards platform.",
+    siteName: "OPENFORMAT Launchpad",
+    images: [
+      {
+        url: "./opengraph-image.png",
+      },
+    ],
+  },
+};
 
 export default function RootLayout({
   children,
