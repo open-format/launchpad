@@ -11,21 +11,21 @@ import { arbitrumSepolia } from "viem/chains";
 import { WagmiProvider, createConfig } from "@privy-io/wagmi";
 import { http } from "wagmi";
 
+const queryClient = new QueryClient();
+
+const config = createConfig({
+  chains: [arbitrumSepolia],
+  transports: {
+    [arbitrumSepolia.id]: http(),
+  },
+});
+
 export default function PrivyProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { theme } = useTheme();
-
-  const queryClient = new QueryClient();
-
-  const config = createConfig({
-    chains: [arbitrumSepolia], // Pass your required chains as an array
-    transports: {
-      [arbitrumSepolia.id]: http(),
-    },
-  });
 
   return (
     <Privy
