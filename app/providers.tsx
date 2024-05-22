@@ -1,8 +1,15 @@
 "use client";
 
 import { PrivyProvider as Privy } from "@privy-io/react-auth";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { arbitrumSepolia } from "viem/chains";
+
+import { WagmiProvider, createConfig } from "@privy-io/wagmi";
+import { http } from "wagmi";
 
 export default function PrivyProvider({
   children,
@@ -10,6 +17,16 @@ export default function PrivyProvider({
   children: React.ReactNode;
 }) {
   const { theme } = useTheme();
+
+  const queryClient = new QueryClient();
+
+  const config = createConfig({
+    chains: [arbitrumSepolia], // Pass your required chains as an array
+    transports: {
+      [arbitrumSepolia.id]: http(),
+    },
+  });
+
   return (
     <Privy
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
@@ -28,7 +45,9 @@ export default function PrivyProvider({
         },
       }}
     >
-      {children}
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={config}>{children}</WagmiProvider>
+      </QueryClientProvider>
     </Privy>
   );
 }
