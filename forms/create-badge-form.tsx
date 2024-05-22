@@ -30,10 +30,12 @@ const FormSchema = z.object({
 
 interface CreateBadgeFormProps {
   closeDialog: () => void;
+  trackEvent: TrackEventFunction;
 }
 
 export function CreateBadgeForm({
   closeDialog,
+  trackEvent,
 }: CreateBadgeFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -71,6 +73,13 @@ export function CreateBadgeForm({
         },
         duration: 10000,
         dismissible: true,
+      });
+
+      await trackEvent({
+        event_name: "Create Badge",
+        event_meta: {
+          app: params.id,
+        },
       });
 
       form.reset();

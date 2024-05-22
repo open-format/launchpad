@@ -54,7 +54,11 @@ import {
 import { useRouter } from "next/navigation";
 import { parseEther, stringToHex } from "viem";
 
-export default function CreateAppDialog() {
+export default function CreateAppDialog({
+  trackEvent,
+}: {
+  trackEvent: TrackEventFunction;
+}) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
 
@@ -130,6 +134,14 @@ export default function CreateAppDialog() {
             window.open(`https://sepolia.arbiscan.io/tx/${hash}`),
         },
         duration: 5000,
+      });
+
+      await trackEvent({
+        event_name: "Create dApp",
+        event_meta: {
+          name: data.name,
+          chain: data.chain,
+        },
       });
 
       router.push(`apps/${appId}`);
