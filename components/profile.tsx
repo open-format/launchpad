@@ -7,10 +7,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { addressSplitter } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
-import Link from "next/link";
 import WalletAvatar from "./gradient-avatar";
 
 export default function Profile() {
@@ -30,6 +30,14 @@ export default function Profile() {
     }
   }
 
+  function getIdentifier() {
+    return user?.github?.username
+      ? `@${user?.github?.username}`
+      : user?.github?.name ??
+          user?.email?.address ??
+          addressSplitter(user?.wallet?.address);
+  }
+
   function handleLogout() {
     queryClient.removeQueries();
     logout();
@@ -44,23 +52,11 @@ export default function Profile() {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <div className="flex flex-col space-y-2 items-center m-3 justify-center">
-          <WalletAvatar seed={user?.wallet?.address} size={32} />
-          {user?.github?.name && (
-            <p className="font-bold  text-xs truncate max-w-[250px]">
-              @{user?.github?.username}
-            </p>
-          )}
-          {user?.email?.address && (
-            <p className="font-bold  text-xs truncate max-w-[250]">
-              {user?.email.address}
-            </p>
-          )}
+          <p className="font-bold  text-xs truncate max-w-[250px]">
+            {getIdentifier()}
+          </p>
         </div>
 
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/home/settings">Settings</Link>
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={toggleTheme}>
           Toggle Theme
