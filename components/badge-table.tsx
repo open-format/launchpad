@@ -63,6 +63,7 @@ function EmptyState() {
           badge to reward users for their achievements and boost
           engagement.
         </p>
+        {/* @ts-ignore */}
         <CreateBadgeDialog />
       </div>
     </div>
