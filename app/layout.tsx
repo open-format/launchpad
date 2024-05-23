@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     siteName: "OPENFORMAT Launchpad",
     images: [
       {
-        url: "./opengraph-image.png",
+        url: "https://app.openformat.tech/opengraph-banner.png",
       },
     ],
   },
