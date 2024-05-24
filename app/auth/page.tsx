@@ -15,9 +15,9 @@ const ITEMS = [
       "Create an API key to interact with the OPENFORMAT API and no-code nodes.",
   },
   {
-    title: "Get Your Web3 Account Details",
+    title: "Get Your web3 Account Details",
     description:
-      "Generate a Web3 account, view your account address, and export your private key to reward your users.",
+      "Generate a web3 account, view your account address, and export your private key to reward your users.",
   },
   {
     title: "Create and View Badges",

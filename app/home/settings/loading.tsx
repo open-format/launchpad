@@ -13,7 +13,7 @@ export default function Loading() {
       <h1>Settings</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Web3 Account</CardTitle>
+          <CardTitle>web3 Account</CardTitle>
           <CardDescription>
             Your web3 account is responsible for sending and receiving
             onchain rewards.
