@@ -1,19 +1,13 @@
 import { getApp } from "@/app/_actions";
-import BadgeTable from "@/components/badge-table";
+import { default as BadgeTable } from "@/components/badge-table";
 import ChainName from "@/components/chain-name";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import ValueBox from "@/components/value-box";
+import { default as ValueBox } from "@/components/value-box";
 import { trackEvent } from "@/lib/analytics";
 import { capitalizeString } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
-import CreateBadgeDialog from "./create-badge";
+import { default as CreateBadgeDialog } from "./create-badge";
 
 async function getData(app: string) {
   try {
@@ -35,32 +29,22 @@ export default async function ViewAppPage({
   return (
     <div className="space-y-5">
       {app && (
-        <h1 className="text-3xl font-bold leading-none tracking-tight">
-          {capitalizeString(app.name)}
-        </h1>
+        <>
+          <h1 className="text-3xl font-bold leading-none tracking-tight">
+            {capitalizeString(app.name)}
+          </h1>
+          <div className="flex space-x-2">
+            <ChainName chain="arbitrumSepolia" />
+            <Badge className="bg-green-500 hover:bg-green-500">
+              <InfoIcon className="h-4 w-4 mr-1" />
+              We cover transactions costs for this blockchain
+            </Badge>
+          </div>
+        </>
       )}
       <Card>
         <CardHeader>
           <h2>Keys</h2>
-          <div className="flex space-x-2">
-            <ChainName chain="arbitrumSepolia" />
-            <TooltipProvider>
-              <Tooltip delayDuration={250}>
-                <TooltipTrigger>
-                  <Badge className="bg-green-500 hover:bg-green-500">
-                    gas sponsorship{" "}
-                    <InfoIcon className="h-4 w-4 ml-1" />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  className="max-w-[300px]"
-                >
-                  We cover transactions costs for this blockchain.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
         </CardHeader>
         <CardContent>
           {app && (
