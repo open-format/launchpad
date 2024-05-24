@@ -5,9 +5,9 @@ import { LoginForm } from "./login-form";
 
 const ITEMS = [
   {
-    title: "Create and View Apps",
+    title: "Create and View dApps",
     description:
-      "Create onchain apps and XP tokens to reward your users.",
+      "Create onchain dApps and XP tokens to reward your users.",
   },
   {
     title: "Generate an API Key",

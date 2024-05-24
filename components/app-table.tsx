@@ -80,7 +80,7 @@ export default function AppTable({ trackEvent }: AppTableProps) {
 
   function handleClick(appName: string) {
     trackEvent({
-      event_name: "View App",
+      event_name: "View dApp",
       event_meta: { name: appName },
     });
   }
@@ -92,7 +92,7 @@ export default function AppTable({ trackEvent }: AppTableProps) {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Chain</TableHead>
-          <TableHead className="hidden lg:block">App ID</TableHead>
+          <TableHead className="hidden lg:block">dApp ID</TableHead>
           <TableHead className="text-right sr-only">View</TableHead>
         </TableRow>
       </TableHeader>

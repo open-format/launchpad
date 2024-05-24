@@ -31,7 +31,7 @@ export default function Web3Account({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>web3 Account</CardTitle>
+        <CardTitle>Web3 Account</CardTitle>
         <CardDescription>
           Your web3 account is responsible for sending and receiving
           onchain rewards.
