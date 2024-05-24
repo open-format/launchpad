@@ -12,7 +12,7 @@ const ITEMS = [
   {
     title: "Generate an API Key",
     description:
-      "Create an API key to interact with the OPENFORMAT API and no-code nodes.",
+      "Create an API key to interact with the OPENFORMAT API.",
   },
   {
     title: "Get Your web3 Account Details",
