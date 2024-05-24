@@ -1,14 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useLogin, usePrivy } from "@privy-io/react-auth";
+import {
+  useLogin,
+  useModalStatus,
+  usePrivy,
+} from "@privy-io/react-auth";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { fundAccount } from "../_actions";
 
 export const LoginForm = () => {
   const { ready, authenticated } = usePrivy();
   const disableLogin = !ready || (ready && authenticated);
+  const { isOpen } = useModalStatus();
 
   const router = useRouter();
 
@@ -18,7 +23,7 @@ export const LoginForm = () => {
         await fundAccount(user.wallet.address);
       }
       if (user) {
-        router.push("/home/apps");
+        router.push("/home/overview");
       }
     },
     onError: (error) => {
@@ -26,21 +31,15 @@ export const LoginForm = () => {
     },
   });
 
+  useEffect(() => {
+    if (!disableLogin) {
+      login();
+    }
+  }, [disableLogin, isOpen]);
+
   return (
-    <div className="flex items-center justify-center">
-      <Button
-        size="lg"
-        disabled={disableLogin}
-        className={
-          "bg-[#FFF404] text-black hover:bg-[#ffe504] hover:shadow font-bold text-xl"
-        }
-        onClick={login}
-      >
-        {disableLogin && (
-          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-        )}
-        Continue
-      </Button>
+    <div className="flex items-center justify-center h-full">
+      <ReloadIcon className="mr-2 h-12 w-12 animate-spin" />
     </div>
   );
 };

@@ -81,7 +81,7 @@ export default function AppTable() {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Chain</TableHead>
-          <TableHead className="hidden lg:block">App ID</TableHead>
+          <TableHead className="hidden xl:block">App ID</TableHead>
           <TableHead className="text-right sr-only">View</TableHead>
         </TableRow>
       </TableHeader>

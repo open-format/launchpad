@@ -1,9 +1,14 @@
 "use client";
 
-import { Home, SettingsIcon } from "lucide-react";
+import {
+  Book,
+  Cog,
+  Home,
+  HomeIcon,
+  Menu,
+  SettingsIcon,
+} from "lucide-react";
 import Link from "next/link";
-
-import { Book, Cog, Menu } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -138,6 +143,13 @@ export default function RootLayout({
             <div className="flex h-full max-h-screen flex-col gap-2">
               <div className="justify-between flex flex-col h-screen">
                 <nav className="grid items-start px-2 text-sm font-medium lg:px-4 my-12 space-y-2">
+                  <Link
+                    href="/home/overview"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  >
+                    <HomeIcon className="h-4 w-4" />
+                    Home
+                  </Link>
                   <Link
                     href="/home/apps"
                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
