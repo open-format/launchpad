@@ -117,13 +117,6 @@ export default function RootLayout({
                     dApps
                   </Link>
                 </SheetClose>
-                <div
-                  aria-disabled
-                  className="pointer-events-none opacity-50 mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-4 w-4" />
-                  Mission Builder <Badge>coming soon</Badge>
-                </div>
                 <SheetClose asChild>
                   <Link
                     href="/home/settings"
@@ -157,13 +150,6 @@ export default function RootLayout({
                     <SettingsIcon className="h-4 w-4" />
                     dApps
                   </Link>
-                  <div
-                    aria-disabled
-                    className="pointer-events-none flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary opacity-50"
-                  >
-                    <Home className="h-4 w-4" />
-                    Mission Builder <Badge>coming soon</Badge>
-                  </div>
                   <Link
                     href="/home/settings"
                     className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
