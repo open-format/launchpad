@@ -13,7 +13,7 @@ export default function Loading() {
       <h1>Settings</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Web3 Account</CardTitle>
+          <CardTitle>web3 Account</CardTitle>
           <CardDescription>
             Your web3 account is responsible for sending and receiving
             onchain rewards.
@@ -25,7 +25,7 @@ export default function Loading() {
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>API Keys</CardTitle>
+          <CardTitle>API Key</CardTitle>
           <CardDescription>
             Securely create a new API key linked to your web3 account.
             Please be careful, as creating a new API key will override

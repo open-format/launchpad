@@ -80,7 +80,7 @@ export default function AppTable({ trackEvent }: AppTableProps) {
 
   function handleClick(appName: string) {
     trackEvent({
-      event_name: "View App",
+      event_name: "View dApp",
       event_meta: { name: appName },
     });
   }
@@ -92,7 +92,9 @@ export default function AppTable({ trackEvent }: AppTableProps) {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Chain</TableHead>
-          <TableHead className="hidden xl:block">App ID</TableHead>
+          <TableHead className="hidden lg:table-cell">
+            dApp ID
+          </TableHead>
           <TableHead className="text-right sr-only">View</TableHead>
         </TableRow>
       </TableHeader>
@@ -100,9 +102,7 @@ export default function AppTable({ trackEvent }: AppTableProps) {
         {data?.apps ? (
           data?.apps.map((app, i) => (
             <TableRow key={i}>
-              <TableCell className="font-medium">
-                {app.name}
-              </TableCell>
+              <TableCell>{app.name}</TableCell>
               <TableCell>
                 {/* @DEV as we support more blockchains, the correct chain will need to be displayed here. */}
                 <Link
@@ -112,7 +112,7 @@ export default function AppTable({ trackEvent }: AppTableProps) {
                   <ChainName chain="arbitrumSepolia" />
                 </Link>
               </TableCell>
-              <TableCell className="hidden lg:block">
+              <TableCell className="hidden lg:table-cell">
                 <ValueBox
                   trackEvent={{
                     fn: trackEvent,
