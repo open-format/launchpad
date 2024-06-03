@@ -10,7 +10,11 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { fundAccount } from "../_actions";
 
-export const LoginForm = () => {
+export function LoginForm({
+  trackEvent,
+}: {
+  trackEvent: TrackEventFunction;
+}) {
   const { ready, authenticated } = usePrivy();
   const disableLogin = !ready || (ready && authenticated);
   const { isOpen } = useModalStatus();
@@ -18,16 +22,26 @@ export const LoginForm = () => {
   const router = useRouter();
 
   const { login } = useLogin({
-    onComplete: async (user, isNewUser) => {
+    onComplete: async (user, isNewUser, _, loginMethod) => {
       if (isNewUser && user?.wallet?.address) {
+        await trackEvent({
+          event_name: "User Signup",
+          event_meta: {
+            loginMethod: loginMethod!,
+          },
+        });
         await fundAccount(user.wallet.address);
+      } else {
       }
       if (user) {
         router.push("/home/overview");
       }
-    },
-    onError: (error) => {
-      console.log(error);
+      await trackEvent({
+        event_name: "User Authenticated",
+        event_meta: {
+          loginMethod: loginMethod!,
+        },
+      });
     },
   });
 
@@ -42,4 +56,4 @@ export const LoginForm = () => {
       <ReloadIcon className="mr-2 h-12 w-12 animate-spin" />
     </div>
   );
-};
+}

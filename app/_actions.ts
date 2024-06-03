@@ -36,7 +36,12 @@ export async function fundAccount(address: string): Promise<boolean> {
       .catch((err) => console.error(err));
   }
 
-  await trackEvent({ event_name: "Create web3 Account" });
+  await trackEvent({
+    event_name: "User Wallet Funded",
+    event_meta: {
+      amount_in_eth: process.env.ACCOUNT_BALANCE_AMOUNT!,
+    },
+  });
 
   return true;
 }
@@ -101,7 +106,6 @@ export async function revealAccountKey(
     if (!decrypted) {
       throw new Error("Error decrypting account, please try again.");
     }
-    await trackEvent({ event_name: "Reveal Account Key" });
 
     return {
       data: { accountKey: decrypted.privateKey },
@@ -162,8 +166,6 @@ export async function verifyChallenge(
     )
       .then((response) => response.json())
       .catch((err) => console.error(err));
-
-    await trackEvent({ event_name: "Generate API Key" });
 
     return verify.api_key;
   } catch (error: any) {

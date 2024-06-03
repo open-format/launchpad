@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { trackEvent } from "@/lib/analytics";
 import Image from "next/image";
 import { LoginForm } from "./login-form";
 
@@ -17,7 +18,7 @@ export default async function LoginPage() {
         <Badge>BETA</Badge>
       </header>
       <div className="max-w-prose mx-auto flex flex-col items-between justify-between h-full">
-        <LoginForm />
+        <LoginForm trackEvent={trackEvent} />
       </div>
     </div>
   );
