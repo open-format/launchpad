@@ -126,7 +126,7 @@ export default function CreateAppDialog({
         });
       }
 
-      toast.success("App successfully created!", {
+      toast.success("dApp successfully created!", {
         description: "You can now create badges for this dApp.",
         action: {
           label: "View Transaction",
@@ -262,7 +262,7 @@ export default function CreateAppDialog({
             {isSubmitting ? (
               <Button disabled>
                 <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-                Creating App...
+                Creating dApp...
               </Button>
             ) : (
               <Button type="submit">Create dApp</Button>
