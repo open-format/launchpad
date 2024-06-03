@@ -50,7 +50,7 @@ export function CreateAPIKey({ trackEvent }: CreateAPIKeyProps) {
   async function handleFormSubmission() {
     try {
       if (!address) {
-        throw new Error("Web3 account not found.");
+        throw new Error("web3 account not found.");
       }
       const challenge = await generateChallenge(address);
 

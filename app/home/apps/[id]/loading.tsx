@@ -18,7 +18,7 @@ export default async function Loading() {
               label="App ID"
               description="This is the App ID used to interact with your onchain application."
               value=""
-              copyText="App ID copied to clipboard."
+              copyText="dApp ID copied to clipboard."
               isLoading={true}
             />
 
@@ -27,7 +27,7 @@ export default async function Loading() {
               description="This is the onchain token address for the XP token associated with this dApp. This value is required for the SDK only."
               value=""
               isLoading={true}
-              copyText="App ID copied to clipboard."
+              copyText="dApp ID copied to clipboard."
             />
           </div>
         </CardContent>

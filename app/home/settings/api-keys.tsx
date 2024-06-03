@@ -20,7 +20,7 @@ export default function APIKeys({ trackEvent }: Web3AccountProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>API Keys</CardTitle>
+        <CardTitle>API Key</CardTitle>
         <CardDescription>
           Securely create a new API key linked to your web3 account.
           Please be careful, as creating a new API key will override

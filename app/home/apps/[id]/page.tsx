@@ -55,10 +55,10 @@ export default async function ViewAppPage({
                     fn: trackEvent,
                     event_name: "dApp ID",
                   }}
-                  label="App ID"
-                  description="This is the App ID used to interact with your onchain application."
+                  label="dApp ID"
+                  description="This is the dApp ID used to interact with your onchain application."
                   value={app?.id}
-                  copyText="App ID copied to clipboard."
+                  copyText="dApp ID copied to clipboard."
                 />
               )}
               {app?.xpToken?.id && (
@@ -70,7 +70,7 @@ export default async function ViewAppPage({
                   label="XP Token Address"
                   description="This is the onchain token address for the XP token associated with this dApp. This value is required for the SDK only."
                   value={app?.xpToken.id}
-                  copyText="App ID copied to clipboard."
+                  copyText="dApp ID copied to clipboard."
                 />
               )}
             </div>
