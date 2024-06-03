@@ -1,4 +1,3 @@
-import GetStarted from "@/components/get-started";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -7,38 +6,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { ArrowRightCircleIcon } from "lucide-react";
 import Link from "next/link";
 
 const ITEMS = [
   {
-    title: "Create and View Apps",
+    title: "Create and view dApps",
     description:
-      "Create onchain apps and XP tokens to reward your users.",
+      "Create onchain dApps and XP tokens to engage and reward your users",
     href: "/home/apps",
   },
   {
-    title: "Generate an API Key",
+    title: "Generate an API key",
     description:
-      "Create an API key to interact with the OPENFORMAT API and no-code nodes.",
+      "Generate an API key to interact with the OPENFORMAT API",
     href: "/home/settings",
   },
   {
-    title: "Get Your Web3 Account Details",
+    title: "Get your web3 account details",
     description:
-      "Generate a Web3 account, view your account address, and export your private key to reward your users.",
+      "Set up a web3 account, view your public key, and export your private key to reward users from your dApps",
     href: "/home/settings",
   },
   {
     title: "Create and View Badges",
     description:
-      "Create trophies and keys to reward users or token-gate your applications.",
-  },
-  {
-    title: "Mission Builder",
-    description: "Create missions in your applications.",
-    comingSoon: true,
+      "Create trophies and keys in your dApps to reward users or token-gate your applications",
   },
 ];
 
@@ -49,15 +42,14 @@ export default function Overview() {
         <CardHeader>
           <CardTitle>Get Started</CardTitle>
           <CardDescription>
-            This section demonstrates what you can do here, why you
-            want to do it, and provides direct links to relevant
-            destinations.
+            Follow the instructions below to create an on-chain reward
+            system in minutes.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <Badge>
             Estimated setup time:
-            <span className="font-bold ml-1">3 minutes</span>
+            <span className="font-bold ml-1">6 minutes</span>
           </Badge>
           <ol className="space-y-4 py-4 px-6 list-disc">
             {ITEMS.map((item, i) => (
@@ -77,15 +69,10 @@ export default function Overview() {
                     </div>
                   </Link>
                 ) : (
-                  <div
-                    className={cn({ "opacity-50": item.comingSoon })}
-                  >
+                  <div>
                     <h3>
                       <strong className="flex items-center">
                         {item.title}
-                        {item.comingSoon && (
-                          <Badge className="ml-2">coming soon</Badge>
-                        )}
                       </strong>
                     </h3>
                     <p className="text-muted-foreground">
@@ -98,7 +85,6 @@ export default function Overview() {
           </ol>
         </CardContent>
       </Card>
-      <GetStarted />
     </div>
   );
 }
