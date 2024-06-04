@@ -56,7 +56,7 @@ function EmptyState({
       <div className="w-[350px] text-center flex items-center justify-center flex-col">
         <Image
           src={emptyBadgeImage}
-          alt="Tree Planting Badge"
+          alt="Empty Badge"
           width={250}
           height={250}
           className="object-cover"
