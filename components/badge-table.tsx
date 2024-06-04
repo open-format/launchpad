@@ -23,7 +23,7 @@ export default function BadgeTable({
   trackEvent,
 }: BadgeTableProps) {
   if (!badges || !badges.length) {
-    return <EmptyState />;
+    return <EmptyState trackEvent={trackEvent} />;
   }
   return (
     <div className="space-y-4">
@@ -46,13 +46,17 @@ export default function BadgeTable({
   );
 }
 
-function EmptyState() {
+function EmptyState({
+  trackEvent,
+}: {
+  trackEvent: TrackEventFunction;
+}) {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="w-[350px] text-center flex items-center justify-center flex-col">
         <Image
           src={emptyBadgeImage}
-          alt="Tree Planting Badge"
+          alt="Empty Badge"
           width={250}
           height={250}
           className="object-cover"
@@ -63,8 +67,7 @@ function EmptyState() {
           badge to reward users for their achievements and boost
           engagement.
         </p>
-        {/* @ts-ignore */}
-        <CreateBadgeDialog />
+        <CreateBadgeDialog trackEvent={trackEvent} />
       </div>
     </div>
   );
