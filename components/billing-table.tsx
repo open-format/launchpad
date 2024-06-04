@@ -68,7 +68,7 @@ export default function BillingTable() {
       </TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[200px]">App</TableHead>
+          <TableHead className="w-[200px]">dApp</TableHead>
           <TableHead>Chain</TableHead>
           <TableHead>Type</TableHead>
           <TableHead>

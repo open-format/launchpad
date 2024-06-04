@@ -24,7 +24,7 @@ export default function ChainName({ chain }: ChainNameProps) {
   const chainName = chainInfo[chain]?.name;
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-1">
       {ChainIcon && <ChainIcon className="h-6 w-6" />}
       <p>{chainName}</p>
     </div>
