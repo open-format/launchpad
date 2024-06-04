@@ -64,7 +64,6 @@ export default function RootLayout({
           src="https://api.pirsch.io/pa.js"
           id="pianjs"
           data-code={process.env.NEXT_PUBLIC_PIRSH_DATA_CODE}
-          data-dev="example.com"
         />
       </body>
     </html>
