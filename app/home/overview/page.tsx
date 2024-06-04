@@ -42,7 +42,7 @@ export default function Overview() {
         <CardHeader>
           <CardTitle>Get Started</CardTitle>
           <CardDescription>
-            Follow the instructions below to create an on-chain reward
+            Follow the instructions below to create an onchain reward
             system in minutes.
           </CardDescription>
         </CardHeader>
@@ -51,13 +51,13 @@ export default function Overview() {
             Estimated setup time:
             <span className="font-bold ml-1">6 minutes</span>
           </Badge>
-          <ol className="space-y-4 py-4 px-6 list-disc">
+          <ol className="space-y-4 py-4 px-6 list-decimal">
             {ITEMS.map((item, i) => (
               <li key={i}>
                 {item.href ? (
                   <Link href={item.href}>
                     <div>
-                      <h3 className="hover:text-muted-foreground">
+                      <h3 className="hover:underline">
                         <strong className="flex items-center">
                           {item.title}{" "}
                           <ArrowRightCircleIcon className="ml-2" />
