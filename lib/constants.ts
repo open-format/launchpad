@@ -4,5 +4,5 @@ export const URLS = {
 };
 
 export const contractAddresses: { [key: string]: `0x${string}` } = {
-  APP_FACTORY: "0x19781Af95cA4E113D5D1412452225D11A84ce992",
+  APP_FACTORY: "0x4174a9206A2213926fb74bA067Ea00e3E0EBEdbB",
 };

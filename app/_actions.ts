@@ -1,8 +1,12 @@
 "use server";
 
 import { trackEvent } from "@/lib/analytics";
-
+import { ThirdwebStorage } from "@thirdweb-dev/storage";
 import { gql, request } from "graphql-request";
+
+const storage = new ThirdwebStorage({
+  secretKey: process.env.THIRDWEB_SECRET, // You can get one from dashboard settings
+});
 
 export async function fundAccount(address: string): Promise<boolean> {
   if (
@@ -106,13 +110,14 @@ export async function getApp(app: string) {
             id
             name
             createdAt
+            metadataURI
           }
         }
       }
     `;
 
     const data = await request<{ app: App }>(
-      process.env.SUBGRAPH_URL!,
+      process.env.NEXT_PUBLIC_SUBGRAPH_URL!,
       query,
       { app }
     );
@@ -121,4 +126,26 @@ export async function getApp(app: string) {
   } catch (error: any) {
     throw new Error(error.message);
   }
+}
+
+export async function uploadFileToIPFS(formData: FormData) {
+  const file = formData.get("file") as File;
+
+  // Convert the file to a Buffer
+  const buffer = await file.arrayBuffer(); // Convert file to ArrayBuffer
+  const fileBuffer = Buffer.from(buffer); // Convert ArrayBuffer to Buffer
+
+  const ipfsHash = await storage.upload(fileBuffer, {
+    uploadWithoutDirectory: true,
+  });
+
+  return ipfsHash;
+}
+
+export async function uploadJSONToIPFS(data: any) {
+  const ipfsHash = await storage.upload(data, {
+    uploadWithoutDirectory: true,
+  });
+
+  return ipfsHash;
 }
