@@ -16,7 +16,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "ipfs.io",
+        hostname: "857c4f158967b95f96003045fdb8c641.ipfscdn.io",
       },
     ],
   },
