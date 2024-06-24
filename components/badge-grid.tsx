@@ -1,23 +1,18 @@
 "use client";
 
 import CreateBadgeDialog from "@/app/home/apps/[id]/create-badge";
+import UpdateBadgeDialog from "@/app/home/apps/[id]/update-badge";
 import { addressSplitter } from "@/lib/utils";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
-import {
-  TooltipContent,
-  TooltipTrigger,
-} from "@radix-ui/react-tooltip";
-import { CopyIcon, InfoIcon } from "lucide-react";
+import { CopyIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { createThirdwebClient } from "thirdweb";
 import { download } from "thirdweb/storage";
 import emptyBadgeImage from "../images/superdev.png";
-import { Badge } from "./ui/badge";
 import { Card, CardContent, CardFooter, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
-import { Tooltip, TooltipProvider } from "./ui/tooltip";
 
 const client = createThirdwebClient({
   clientId: process.env.NEXT_PUBLIC_THIRDWEB_CLIENT!,
@@ -31,7 +26,7 @@ export default function BadgeGrid({
   trackEvent: TrackEventFunction;
 }) {
   if (!badges || !badges.length) {
-    return <EmptyState />;
+    return <EmptyState trackEvent={trackEvent} />;
   }
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -40,6 +35,7 @@ export default function BadgeGrid({
           key={badge.id}
           badge={badge}
           metadataURI={badge.metadataURI}
+          trackEvent={trackEvent}
         />
       ))}
     </div>
@@ -49,9 +45,11 @@ export default function BadgeGrid({
 function Item({
   badge,
   metadataURI,
+  trackEvent,
 }: {
   badge: any;
   metadataURI: string;
+  trackEvent: TrackEventFunction;
 }) {
   const [metadata, setMetadata] = useState<any>(null);
   const [image, setImage] = useState<any>(null);
@@ -99,81 +97,55 @@ function Item({
       </CardContent>
       <CardFooter className="flex flex-col items-start space-y-4">
         {metadata?.name ? (
-          <CardTitle>{metadata.name}</CardTitle>
+          <div className="flex justify-between items-center w-full">
+            <CardTitle>{metadata.name}</CardTitle>
+            <UpdateBadgeDialog
+              metadata={metadata}
+              badge={badge}
+              trackEvent={trackEvent}
+            />
+          </div>
         ) : badge.name ? (
           <CardTitle>{badge.name}</CardTitle>
         ) : (
           <Skeleton />
         )}
-        <div className="flex justify-between w-full">
-          {metadata?.type && (
-            <div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Badge className="font-semibold">
-                      Type <InfoIcon className="h-4 w-4 ml-1" />
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent>Type of badge</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <div className="flex items-center space-x-1">
-                <p>{metadata.type}</p>
-              </div>
-            </div>
-          )}
-
-          {badge?.id && (
-            <div>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Badge className="font-semibold">
-                      Badge ID <InfoIcon className="h-4 w-4 ml-1" />
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent>Type of badge</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <div
-                onClick={() => {
-                  navigator.clipboard.writeText(badge.id);
-                  toast("Badge ID copied to clipboard.");
-                }}
-              >
-                <div className="flex items-center space-x-1">
-                  <p>{addressSplitter(badge.id)}</p>
-                  <CopyIcon className="hover:text-muted-foreground h-4 w-4" />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {metadata?.description && (
-          <div>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge className="font-semibold">
-                    Description <InfoIcon className="h-4 w-4 ml-1" />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent>Badge Description</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+        <ul className="space-y-4">
+          <li
+            onClick={() => {
+              navigator.clipboard.writeText(badge.id);
+              toast("Badge ID copied to clipboard.");
+            }}
+          >
+            <h3>Badge ID</h3>
             <div className="flex items-center space-x-1">
-              <p>{metadata.description}</p>
+              <p>{addressSplitter(badge.id)}</p>
+              <CopyIcon className="hover:text-muted-foreground h-4 w-4" />
             </div>
-          </div>
-        )}
+          </li>
+          {metadata?.type && (
+            <li>
+              <h3>Type</h3>
+              <p>{metadata?.type}</p>
+            </li>
+          )}
+          {metadata?.description && (
+            <li>
+              <h3>Description</h3>
+              <p>{metadata?.description}</p>
+            </li>
+          )}
+        </ul>
       </CardFooter>
     </Card>
   );
 }
 
-function EmptyState() {
+function EmptyState({
+  trackEvent,
+}: {
+  trackEvent: TrackEventFunction;
+}) {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="w-[350px] text-center flex items-center justify-center flex-col">
@@ -190,7 +162,8 @@ function EmptyState() {
           badge to reward users for their achievements and boost
           engagement.
         </p>
-        <CreateBadgeDialog />
+
+        <CreateBadgeDialog trackEvent={trackEvent} />
       </div>
     </div>
   );
