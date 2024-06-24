@@ -135,6 +135,9 @@ export function CreateBadgeForm({
                 <Input placeholder="Name" {...field} />
               </FormControl>
               <FormMessage />
+              <p className="text-destructive text-sm">
+                Name is immutable and cannot be changed.
+              </p>
             </FormItem>
           )}
         />
