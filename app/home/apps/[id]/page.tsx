@@ -1,5 +1,5 @@
 import { getApp } from "@/app/_actions";
-import { default as BadgeTable } from "@/components/badge-table";
+import BadgeGrid from "@/components/badge-grid";
 import ChainName from "@/components/chain-name";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -87,7 +87,7 @@ export default async function ViewAppPage({
           </CardHeader>
         )}
         <CardContent>
-          <BadgeTable badges={app?.badges} trackEvent={trackEvent} />
+          <BadgeGrid badges={app?.badges} trackEvent={trackEvent} />
         </CardContent>
       </Card>
     </div>

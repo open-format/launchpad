@@ -4,5 +4,6 @@ export const URLS = {
 };
 
 export const contractAddresses: { [key: string]: `0x${string}` } = {
-  APP_FACTORY: "0x19781Af95cA4E113D5D1412452225D11A84ce992",
+  APP_FACTORY: process.env
+    .NEXT_PUBLIC_APP_FACTORY_ADDRESS as `0x${string}`,
 };

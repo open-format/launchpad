@@ -88,6 +88,10 @@ export default function CreateAppDialog({
     data: z.infer<typeof FormSchema>
   ) {
     try {
+      if (!contractAddresses.APP_FACTORY) {
+        throw new Error("APP_FACTORY_ADDRESS is not set");
+      }
+
       const hash = await writeContract(config, {
         address: contractAddresses.APP_FACTORY,
         abi: appFactoryAbi,
@@ -146,7 +150,12 @@ export default function CreateAppDialog({
 
       router.push(`apps/${appId}`);
     } catch (e: any) {
-      if (e.metaMessages[0].includes("nameAlreadyUsed")) {
+      console.log({ e });
+      if (
+        e.metaMessages &&
+        e.metaMessages.length &&
+        e.metaMessages[0].includes("nameAlreadyUsed")
+      ) {
         setError("name", {
           type: "custom",
           message: getErrorMessage(e.metaMessages[0]),

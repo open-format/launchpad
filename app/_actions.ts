@@ -1,20 +1,12 @@
 "use server";
 
 import { trackEvent } from "@/lib/analytics";
-import createSupabaseServerClient from "@/lib/supabase/server";
-import { ethers } from "ethers";
+import { ThirdwebStorage } from "@thirdweb-dev/storage";
 import { gql, request } from "graphql-request";
-import { redirect } from "next/navigation";
-import { Resend } from "resend";
 
-// @TODO: Implement magic link
-export async function signInWithOtp({ email }: { email: string }) {
-  const supabase = await createSupabaseServerClient();
-  const result = await supabase.auth.signInWithOtp({
-    email: email,
-  });
-  return JSON.stringify(result);
-}
+const storage = new ThirdwebStorage({
+  secretKey: process.env.THIRDWEB_SECRET, // You can get one from dashboard settings
+});
 
 export async function fundAccount(address: string): Promise<boolean> {
   if (
@@ -44,82 +36,6 @@ export async function fundAccount(address: string): Promise<boolean> {
   });
 
   return true;
-}
-
-export async function getAccountAddress(): Promise<
-  ActionResponse<AddressResponse>
-> {
-  try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (!wallet.data) {
-      throw new Error("Account not found, please try again.");
-    }
-
-    return { data: { address: wallet.data.address } };
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-}
-
-export async function revealAccountKey(
-  password: string
-): Promise<ActionResponse<AccountKeyResponse>> {
-  try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (!wallet) {
-      throw new Error("Account not found, please try again.");
-    }
-
-    const decrypted = await ethers.Wallet.fromEncryptedJson(
-      wallet.data.keystore,
-      password
-    );
-
-    if (!decrypted) {
-      throw new Error("Error decrypting account, please try again.");
-    }
-
-    return {
-      data: { accountKey: decrypted.privateKey },
-    };
-  } catch (error: any) {
-    if (
-      error.code === "INVALID_ARGUMENT" &&
-      error.argument === "password"
-    ) {
-      throw new Error("Incorrect password, please try again.");
-    } else {
-      throw new Error(error.message);
-    }
-  }
 }
 
 export async function generateChallenge(address: string) {
@@ -180,53 +96,6 @@ export async function verifyChallenge(
   }
 }
 
-export async function getUserApps() {
-  try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (!wallet.data) {
-      throw new Error("Account not found, please try again.");
-    }
-
-    const query = gql`
-      query getAppsByUser($user: String!) {
-        apps(
-          where: { owner_contains_nocase: $user }
-          orderBy: createdAt
-          orderDirection: desc
-        ) {
-          id
-          name
-          createdAt
-        }
-      }
-    `;
-
-    const data = await request<AppData>(
-      process.env.SUBGRAPH_URL!,
-      query,
-      { user: wallet.data.address }
-    );
-
-    return data.apps;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-}
-
 export async function getApp(app: string) {
   try {
     const query = gql`
@@ -241,13 +110,14 @@ export async function getApp(app: string) {
             id
             name
             createdAt
+            metadataURI
           }
         }
       }
     `;
 
     const data = await request<{ app: App }>(
-      process.env.SUBGRAPH_URL!,
+      process.env.NEXT_PUBLIC_SUBGRAPH_URL!,
       query,
       { app }
     );
@@ -258,96 +128,24 @@ export async function getApp(app: string) {
   }
 }
 
-export async function validatePassword(password: string) {
-  try {
-    const supabase = await createSupabaseServerClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+export async function uploadFileToIPFS(formData: FormData) {
+  const file = formData.get("file") as File;
 
-    const wallet = await supabase
-      .from("wallet")
-      .select()
-      .eq("id", user?.id)
-      .maybeSingle();
+  // Convert the file to a Buffer
+  const buffer = await file.arrayBuffer(); // Convert file to ArrayBuffer
+  const fileBuffer = Buffer.from(buffer); // Convert ArrayBuffer to Buffer
 
-    const decrypted = await ethers.Wallet.fromEncryptedJson(
-      wallet.data.keystore,
-      password
-    );
+  const ipfsHash = await storage.upload(fileBuffer, {
+    uploadWithoutDirectory: true,
+  });
 
-    return true;
-  } catch (error: any) {
-    console.log({ error });
-    if (
-      error.code === "INVALID_ARGUMENT" &&
-      error.argument === "password"
-    ) {
-      throw new Error("Incorrect password, please try again.");
-    } else {
-      throw new Error(error.message);
-    }
-  }
+  return ipfsHash;
 }
 
-export async function addUserToAudience() {
-  try {
-    const audienceId = process.env.RESEND_AUDIENCE_ID;
+export async function uploadJSONToIPFS(data: any) {
+  const ipfsHash = await storage.upload(data, {
+    uploadWithoutDirectory: true,
+  });
 
-    if (!audienceId) {
-      return;
-    }
-
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const supabase = await createSupabaseServerClient();
-    const user = await supabase.auth.getUser();
-
-    if (!user || !user?.data?.user?.email) {
-      return;
-    }
-
-    const result = await resend.contacts.create({
-      email: user.data.user?.email,
-      firstName: user.data.user?.user_metadata["name"].split(" ")[0],
-      unsubscribed: false,
-      audienceId,
-    });
-
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-}
-
-export async function deleteAccount() {
-  try {
-    const supabase = await createSupabaseServerClient(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-
-    const { error } = await supabase.auth.admin.deleteUser(user.id);
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    await supabase.auth.signOut();
-  } catch (error: any) {
-    console.log({ error });
-    if (
-      error.code === "INVALID_ARGUMENT" &&
-      error.argument === "password"
-    ) {
-      throw new Error("Incorrect password, please try again.");
-    } else {
-      throw new Error(error.message);
-    }
-  }
-
-  redirect("/register");
+  return ipfsHash;
 }

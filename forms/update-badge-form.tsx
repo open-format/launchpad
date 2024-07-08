@@ -24,39 +24,38 @@ import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 
-import { badgeFactoryAbi } from "@/abis/ERC721FactoryFacet";
-import { URLS } from "@/lib/constants";
-import { usePrivy } from "@privy-io/react-auth";
+import { badgeAbi } from "@/abis/ERC721Badge";
 import { writeContract } from "@wagmi/core";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { stringToHex } from "viem";
 import { useConfig } from "wagmi";
 
 const FormSchema = z.object({
-  name: z.string().min(3).max(32),
+  name: z.string().min(3).max(32).optional(),
   description: z.string().min(3),
   type: z.string(),
   image: z.any(),
 });
 
-interface CreateBadgeFormProps {
+interface UpdateBadgeFormProps {
   closeDialog: () => void;
   trackEvent: TrackEventFunction;
+  metadata: any;
+  badge: Badge;
 }
 
-export function CreateBadgeForm({
+export function UpdateBadgeForm({
+  badge,
+  metadata,
   closeDialog,
   trackEvent,
-}: CreateBadgeFormProps) {
+}: UpdateBadgeFormProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+
   const config = useConfig();
-  const { user } = usePrivy();
-  const address = user?.wallet?.address;
   const router = useRouter();
-  const params = useParams();
   const image = form.watch("image");
 
   async function handleFormSubmission(
@@ -65,50 +64,35 @@ export function CreateBadgeForm({
     try {
       const formData = new FormData();
       formData.append("file", data.image);
+      let image = null;
 
-      const image = await uploadFileToIPFS(formData);
+      if (data.image) {
+        image = await uploadFileToIPFS(formData);
+      }
 
-      const metadata = {
-        name: data.name,
+      const newMetadata = {
         description: data.description,
         type: data.type,
-        image: image,
+        ...(image && { image: image }),
       };
 
-      const metadataURI = await uploadJSONToIPFS(metadata);
+      const mergeMetadata = { ...metadata, ...newMetadata };
 
-      console.log({ metadataURI });
+      const metadataURI = await uploadJSONToIPFS(mergeMetadata);
 
       await writeContract(config, {
-        address: params.id as `0x${string}`,
-        abi: badgeFactoryAbi,
-        functionName: "createERC721WithTokenURI",
-        args: [
-          data.name,
-          "BADGE",
-          metadataURI,
-          address as `0x${string}`,
-          1000,
-          stringToHex("Badge", { size: 32 }),
-        ],
+        address: badge.id as `0x${string}`,
+        abi: badgeAbi,
+        functionName: "setBaseURI",
+        args: [metadataURI],
       }).then(() => setTimeout(() => router.refresh(), 1000));
 
-      toast.success(`Badge successfully created!`, {
-        description:
-          "Copy the name or badge ID to start using it in your application.",
-        action: {
-          label: "Learn more",
-          onClick: () =>
-            window.open(`${URLS.docs}/functions/rewards`, "_blank"),
-        },
-        duration: 10000,
-        dismissible: true,
-      });
+      toast.success(`Badge successfully updated!`);
 
       await trackEvent({
-        event_name: "Create Badge",
+        event_name: "Update Badge",
         event_meta: {
-          app: params.id,
+          app: badge.id,
         },
       });
 
@@ -126,6 +110,8 @@ export function CreateBadgeForm({
         onSubmit={form.handleSubmit(handleFormSubmission)}
       >
         <FormField
+          disabled
+          defaultValue={metadata?.name}
           control={form.control}
           name="name"
           render={({ field }) => (
@@ -144,6 +130,7 @@ export function CreateBadgeForm({
         <FormField
           control={form.control}
           name="description"
+          defaultValue={metadata?.description}
           render={({ field }) => (
             <FormItem className="flex-1">
               <FormLabel>Description</FormLabel>
@@ -159,6 +146,7 @@ export function CreateBadgeForm({
         />
         <FormField
           control={form.control}
+          defaultValue={metadata?.type}
           name="type"
           render={({ field }) => (
             <FormItem>

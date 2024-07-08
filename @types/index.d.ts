@@ -35,6 +35,13 @@ type Badge = {
   createdAt: string;
 };
 
+type BadgeMetadata = {
+  name: string;
+  description: string;
+  image: string;
+  type: string;
+};
+
 type App = {
   id: string;
   name: string;
