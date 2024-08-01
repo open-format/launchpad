@@ -41,7 +41,7 @@ export async function fundAccount(address: string): Promise<boolean> {
 export async function generateChallenge(address: string) {
   try {
     const challenge = await fetch(
-      "https://api.openformat.tech/key/challenge",
+      `${process.env.OPENFORMAT_API_URL}/key/challenge`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ export async function verifyChallenge(
 ) {
   try {
     const verify = await fetch(
-      "https://api.openformat.tech/key/verify",
+      `${process.env.OPENFORMAT_API_URL}/key/verify`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
