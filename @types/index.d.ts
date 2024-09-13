@@ -52,6 +52,13 @@ type App = {
   badges: Badge[];
 };
 
+type FungibleToken = {
+  id: string;
+  name: string;
+  symbol: string;
+  totalSupply: string;
+};
+
 interface AppData {
   apps: App[];
 }
