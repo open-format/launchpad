@@ -113,16 +113,28 @@ export async function getApp(app: string) {
             metadataURI
           }
         }
+        fungibleTokens(
+          orderBy: createdAt
+          orderDirection: desc
+          where: {
+            app_: { id: $app }
+            symbol_not_contains_nocase: "xp"
+          }
+        ) {
+          id
+          name
+          symbol
+          totalSupply
+        }
       }
     `;
 
-    const data = await request<{ app: App }>(
-      process.env.NEXT_PUBLIC_SUBGRAPH_URL!,
-      query,
-      { app }
-    );
+    const data = await request<{
+      app: App;
+      fungibleTokens: FungibleToken[];
+    }>(process.env.NEXT_PUBLIC_SUBGRAPH_URL!, query, { app });
 
-    return data.app;
+    return data;
   } catch (error: any) {
     throw new Error(error.message);
   }
