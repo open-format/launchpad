@@ -7,7 +7,10 @@ import { default as ValueBox } from "@/components/value-box";
 import { trackEvent } from "@/lib/analytics";
 import { capitalizeString } from "@/lib/utils";
 import { InfoIcon } from "lucide-react";
+import { formatEther } from "viem";
 import { default as CreateBadgeDialog } from "./create-badge";
+import { default as CreateTokenDialog } from "./create-token";
+import ManageTokenSupply from "./manage-token-supply";
 
 async function getData(app: string) {
   try {
@@ -24,7 +27,13 @@ export default async function ViewAppPage({
 }: {
   params: { id: string };
 }) {
-  const app = await getData(params.id.toLowerCase());
+  const data = await getData(params.id.toLowerCase());
+
+  if (!data) {
+    return <p>App not found</p>;
+  }
+
+  const { app, fungibleTokens } = data;
 
   return (
     <div className="space-y-5">
@@ -75,6 +84,43 @@ export default async function ViewAppPage({
               )}
             </div>
           )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between w-full">
+            <h2>Tokens</h2>
+            <CreateTokenDialog trackEvent={trackEvent} />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {fungibleTokens?.map((token) => (
+            <div key={token.id} className="border rounded-md p-4">
+              <h3>{token.name}</h3>
+              <div
+                key={token.id}
+                className="flex space-x-2 space-y-4"
+              >
+                <ul className="space-y-4">
+                  <li>
+                    <h4>ID</h4>
+                    <p>{token.id}</p>
+                  </li>
+                  <li>
+                    <h4>Symbol</h4>
+                    <p>{token.symbol}</p>
+                  </li>
+                  <li>
+                    <h4>Total Supply</h4>
+                    <p>{formatEther(BigInt(token.totalSupply))}</p>
+                    <ManageTokenSupply
+                      tokenId={token.id as `0x${string}`}
+                    />
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
       <Card>
