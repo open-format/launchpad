@@ -18,10 +18,14 @@ import { getErrorMessage } from "@/lib/errors";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
 import { tokenFactoryAbi } from "@/abis/ERC20FactoryFacet";
-import { writeContract } from "@wagmi/core";
+import { getEventLog } from "@/lib/transactions";
+import {
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { parseEther, stringToHex } from "viem";
+import { erc20Abi, maxUint256, parseEther, stringToHex } from "viem";
 import { useConfig } from "wagmi";
 
 const FormSchema = z.object({
@@ -49,7 +53,7 @@ export function CreateTokenForm({
     data: z.infer<typeof FormSchema>
   ) {
     try {
-      await writeContract(config, {
+      const hash = await writeContract(config, {
         address: params.id as `0x${string}`,
         abi: tokenFactoryAbi,
         functionName: "createERC20",
@@ -60,7 +64,31 @@ export function CreateTokenForm({
           parseEther(data.supply.toString()),
           stringToHex("Base", { size: 32 }),
         ],
-      }).then(() => setTimeout(() => router.refresh(), 1000));
+      });
+
+      const transactionReceipt = await waitForTransactionReceipt(
+        config,
+        {
+          hash,
+        }
+      );
+
+      const tokenId = await getEventLog(
+        transactionReceipt,
+        tokenFactoryAbi,
+        "Created"
+      );
+
+      if (tokenId) {
+        await writeContract(config, {
+          address: tokenId,
+          abi: erc20Abi,
+          functionName: "approve",
+          args: [params.id as `0x${string}`, maxUint256],
+        }).then(() => {
+          setTimeout(() => router.refresh(), 1000);
+        });
+      }
 
       toast.success("Token successfully created!", {
         description:
