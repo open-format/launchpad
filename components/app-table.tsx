@@ -61,9 +61,13 @@ export default function AppTable({ trackEvent }: AppTableProps) {
     return null;
   }
 
-  const { data, isLoading } = useGraphQLQuery(["getApps"], GET_APPS, {
-    user: address,
-  });
+  const { data, isLoading } = useGraphQLQuery<AppData>(
+    ["getApps"],
+    GET_APPS,
+    {
+      user: address,
+    }
+  );
 
   function handleClick(appName: string) {
     trackEvent({

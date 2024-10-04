@@ -51,7 +51,7 @@ export default function CreditsSection({
     }[];
   }>(["getTreasuryBalance"], GET_TREASURY_BALANCE, {
     tokenAddress: creditToken.id,
-    user: user?.wallet.address.toLowerCase(),
+    user: user?.wallet?.address?.toLowerCase() || "",
   });
 
   if (isLoading) return <div>Loading...</div>;
@@ -95,7 +95,7 @@ export default function CreditsSection({
       console.log({ e });
       toast.error(getErrorMessage(e.message));
     }
-    setMintAmount("");
+    setMintAmount(null);
   }
 
   async function burn() {
@@ -146,7 +146,7 @@ export default function CreditsSection({
       console.log({ e });
       toast.error(getErrorMessage(e.message));
     }
-    setBurnAmount("");
+    setBurnAmount(null);
   }
 
   if (!data) return <div></div>;
@@ -195,7 +195,7 @@ export default function CreditsSection({
             min={0}
             type="number"
             placeholder="Enter amount"
-            value={mintAmount}
+            value={mintAmount || ""}
             onChange={(e) => setMintAmount(Number(e.target.value))}
           />
           <Button variant="outline" onClick={mint}>
@@ -208,7 +208,7 @@ export default function CreditsSection({
             min={0}
             type="number"
             placeholder="Enter Amount"
-            value={burnAmount}
+            value={burnAmount || ""}
             onChange={(e) => setBurnAmount(Number(e.target.value))}
           />
           <Button variant="outline" onClick={burn}>
