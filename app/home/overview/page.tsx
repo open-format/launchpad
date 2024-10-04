@@ -1,3 +1,4 @@
+import AppTable from "@/components/app-table";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -6,15 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { trackEvent } from "@/lib/analytics";
 import { ArrowRightCircleIcon } from "lucide-react";
 import Link from "next/link";
+import CreateAppDialog from "../apps/create/create-app";
 
 const ITEMS = [
   {
-    title: "Create and view dApps",
+    title: "Create your first dApp below",
     description:
-      "Create onchain dApps and XP tokens to engage and reward your users",
-    href: "/home/apps",
+      "Create onchain dApps, XP tokens, and credit tokens to engage and reward your users",
   },
   {
     title: "Generate an API key",
@@ -38,7 +40,8 @@ const ITEMS = [
 export default function Overview() {
   return (
     <div className="space-y-4">
-      <Card>
+      <h1>Home</h1>
+      <Card className="border-none">
         <CardHeader>
           <CardTitle>Get Started</CardTitle>
           <CardDescription>
@@ -83,6 +86,18 @@ export default function Overview() {
               </li>
             ))}
           </ol>
+        </CardContent>
+      </Card>
+
+      <Card className="border-0">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between w-full">
+            <span>dApps</span>
+            <CreateAppDialog trackEvent={trackEvent} />
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <AppTable trackEvent={trackEvent} />
         </CardContent>
       </Card>
     </div>

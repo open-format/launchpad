@@ -34,33 +34,17 @@
 
     --radius: 0.5rem;
 
-    /* --privy-border-radius-sm: 'your-custom-value';
-    --privy-border-radius-md: 'your-custom-value';
-    --privy-border-radius-lg: 'your-custom-value';
-    --privy-border-radius-full: 'your-custom-value';
-    --privy-color-background: 'your-custom-value';
-    --privy-color-background-2: 'your-custom-value';
-    --privy-color-foreground: 'your-custom-value';
-    --privy-color-foreground-2: 'your-custom-value';
-    --privy-color-foreground-3: 'your-custom-value';
-    --privy-color-foreground-4: 'your-custom-value';
-    --privy-color-foreground-accent: 'your-custom-value';
-    --privy-color-accent: 'your-custom-value';
-    --privy-color-accent-light: 'your-custom-value';
-    --privy-color-accent-dark: 'your-custom-value';
-    --privy-color-success: 'your-custom-value';
-    --privy-color-error: 'your-custom-value';
-    --privy-color-error-light: 'your-custom-value'; */
+    --of-yellow: 51 100% 50%;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 248, 16%, 10%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 248, 16%, 10%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 248, 16%, 10%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%;

@@ -77,8 +77,6 @@ export function CreateBadgeForm({
 
       const metadataURI = await uploadJSONToIPFS(metadata);
 
-      console.log({ metadataURI });
-
       await writeContract(config, {
         address: params.id as `0x${string}`,
         abi: badgeFactoryAbi,

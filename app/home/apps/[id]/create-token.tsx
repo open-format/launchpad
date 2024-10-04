@@ -26,13 +26,13 @@ export default function CreateTokenDialog({
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
       <DialogTrigger className={buttonVariants()}>
-        Create Token
+        Create Credit Token
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Token</DialogTitle>
+          <DialogTitle>Create Credit Token</DialogTitle>
           <DialogDescription>
-            Tokens are ideal for enabling users to purchase services
+            Credits are ideal for enabling users to purchase services
             and functionality within your ecosystem, driving
             engagement and retention.
           </DialogDescription>

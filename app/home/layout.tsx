@@ -3,7 +3,6 @@
 import {
   Book,
   Cog,
-  Home,
   HomeIcon,
   Menu,
   SettingsIcon,
@@ -110,15 +109,6 @@ export default function RootLayout({
                 </Link>
                 <SheetClose asChild>
                   <Link
-                    href="/home/apps"
-                    className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Home className="h-5 w-5" />
-                    dApps
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <Link
                     href="/home/settings"
                     className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                   >
@@ -131,7 +121,7 @@ export default function RootLayout({
           </Sheet>
         </header>
 
-        <div className="grid max-h-screen w-full md:grid-cols-[280px_1fr] lg:grid-cols-[350px_1fr]">
+        <div className="grid max-h-screen w-full md:grid-cols-[280px_1fr]">
           <div className="hidden border-r md:block h-screen">
             <div className="flex h-full max-h-screen flex-col gap-2">
               <div className="justify-between flex flex-col h-screen">
@@ -142,13 +132,6 @@ export default function RootLayout({
                   >
                     <HomeIcon className="h-4 w-4" />
                     Home
-                  </Link>
-                  <Link
-                    href="/home/apps"
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  >
-                    <SettingsIcon className="h-4 w-4" />
-                    dApps
                   </Link>
                   <Link
                     href="/home/settings"

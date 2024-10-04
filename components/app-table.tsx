@@ -9,15 +9,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useGraphQLQuery } from "@/lib/subgraph";
 import { usePrivy } from "@privy-io/react-auth";
-import { useQuery } from "@tanstack/react-query";
-import request, { gql } from "graphql-request";
+import { gql } from "graphql-request";
 import Image from "next/image";
 import Link from "next/link";
 import ChainName from "./chain-name";
+import Copy from "./copy";
 import { buttonVariants } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import ValueBox from "./value-box";
 
 type App = {
   id: string;
@@ -36,32 +36,18 @@ const GET_APPS = gql`
       name
       createdAt
     }
+    fungibleTokens(
+      orderBy: createdAt
+      orderDirection: desc
+      where: { app_: { id: $app }, symbol_not_contains_nocase: "xp" }
+    ) {
+      id
+      name
+      symbol
+      totalSupply
+    }
   }
 `;
-
-const fetcher = async (
-  query: any,
-  variables: Record<string, string>
-) => {
-  const data = await request<AppData>(
-    process.env.NEXT_PUBLIC_SUBGRAPH_URL!,
-    query,
-    { user: variables.user_address }
-  );
-
-  return data;
-};
-
-export const useGraphQLQuery = (
-  queryKey: string[],
-  query: any,
-  variables: Record<string, string>
-) => {
-  return useQuery({
-    queryKey,
-    queryFn: () => fetcher(query, variables),
-  });
-};
 
 interface AppTableProps {
   trackEvent: TrackEventFunction;
@@ -76,7 +62,7 @@ export default function AppTable({ trackEvent }: AppTableProps) {
   }
 
   const { data, isLoading } = useGraphQLQuery(["getApps"], GET_APPS, {
-    user_address: address,
+    user: address,
   });
 
   function handleClick(appName: string) {
@@ -95,62 +81,48 @@ export default function AppTable({ trackEvent }: AppTableProps) {
   }
 
   return (
-    <div className="flex justify-between flex-col">
-      <div className="flex justify-between items-center">
-        <h1>dApps</h1>
-        <CreateAppDialog trackEvent={trackEvent} />
-      </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Chain</TableHead>
-            <TableHead className="hidden lg:table-cell">
-              dApp ID
-            </TableHead>
-            <TableHead className="text-right sr-only">View</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data?.apps &&
-            data?.apps.map((app, i) => (
-              <TableRow key={i}>
-                <TableCell>{app.name}</TableCell>
-                <TableCell>
-                  {/* @DEV as we support more blockchains, the correct chain will need to be displayed here. */}
-                  <Link
-                    href="https://sepolia.arbiscan.io"
-                    target="_blank"
-                  >
-                    <ChainName chain="arbitrumSepolia" />
-                  </Link>
-                </TableCell>
-                <TableCell className="hidden lg:table-cell">
-                  <ValueBox
-                    trackEvent={{
-                      fn: trackEvent,
-                      event_name: "dApp ID",
-                    }}
-                    basic
-                    label="dApp ID"
-                    value={app.id}
-                    copyText="dApp ID copied to clipboard."
-                  />
-                </TableCell>
-                <TableCell className="text-right">
-                  <Link
-                    className={buttonVariants()}
-                    href={`apps/${app.id}`}
-                    onClick={() => handleClick(app.name)}
-                  >
-                    View
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>ID</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Chain</TableHead>
+          <TableHead className="text-right sr-only">View</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {data?.apps &&
+          data?.apps.map((app, i) => (
+            <TableRow key={i}>
+              <TableCell className="align-left">
+                <Copy
+                  value={app.id}
+                  copyText="dApp ID copied to clipboard."
+                />
+              </TableCell>
+              <TableCell>{app.name}</TableCell>
+              <TableCell>
+                {/* @DEV as we support more blockchains, the correct chain will need to be displayed here. */}
+                <Link
+                  href="https://sepolia.arbiscan.io"
+                  target="_blank"
+                >
+                  <ChainName chain="arbitrumSepolia" />
+                </Link>
+              </TableCell>
+              <TableCell className="text-right">
+                <Link
+                  className={buttonVariants({ variant: "outline" })}
+                  href={`apps/${app.id}`}
+                  onClick={() => handleClick(app.name)}
+                >
+                  View dApp
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+      </TableBody>
+    </Table>
   );
 }
 

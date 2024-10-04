@@ -66,7 +66,6 @@ export function CreateAPIKey({ trackEvent }: CreateAPIKeyProps) {
       if (user?.wallet?.walletClientType === "privy") {
         signed = await signMessage(challenge.challenge, uiConfig);
       } else {
-        console.log("here", address);
         signed = await signMessageWallet(config, {
           message: challenge.challenge,
         });

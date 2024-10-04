@@ -38,7 +38,6 @@ export async function handleTransaction(
     //@DEV This is suitable for now, but may need to be updated in the future.
     return logs[0].args.id;
   } catch (error: any) {
-    console.log({ error });
     if (error instanceof BaseError) {
       if (error.details) {
         throw new Error(error.details);
@@ -62,12 +61,9 @@ export async function getEventLog(
       logs: receipt.logs,
     });
 
-    console.log({ logs });
-
     //@DEV This is suitable for now, but may need to be updated in the future.
     return logs[0].args.id;
   } catch (error: any) {
-    console.log({ error });
     if (error instanceof BaseError) {
       if (error.details) {
         throw new Error(error.details);
